@@ -1,21 +1,26 @@
 from tkinter import *
 from tkinter import filedialog
-from Point import Point
-from Maze import *
+
+from AlgorithmType import *
+from Colors import *
+from Maze import Maze
+from Node import Node
 
 root = Tk()  # main window
 root.title("Path Finding")
 root.configure(background='#2b2b2b')
 root.geometry("300x300")  # width X height
 root.resizable(False, False)
-file = None
-maze = Maze
+
+width = 800
+
 
 
 def import_file():  # a function to read a text file and analyze it
     global maze
-    file = filedialog.askopenfilename(initialdir="/", title="Select File",
-                                      filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
+    # file = filedialog.askopenfilename(initialdir="/", title="Select File",
+    #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
+    file = "C:\\Users\\waseem tannous\\Desktop\\matrix.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -35,18 +40,47 @@ def import_file():  # a function to read a text file and analyze it
 
     third_line = f.readline()
     arr = [int(num) for num in third_line.split(',')]
-    start = Point(arr[0], arr[1])
+    start = (arr[0], arr[1])
 
     fourth_line = f.readline()
     arr = [int(num) for num in fourth_line.split(',')]
-    end = Point(arr[0], arr[1])
+    end = (arr[0], arr[1])
 
-    matrix = [[int(num) for num in line.split(',')] for line in f if line.strip() != ""]
+    matrix = [[int(num) for num in line.split(',')] for line in f if line.strip(' ') != ""]
 
     maze = Maze(algotype=algo_type, size=size, start=start, end=end, matrix=matrix)
 
     f.close()
+    make_grid(maze)
     start_button['state'] = NORMAL
+
+
+def make_grid(maze):
+    grid = []
+    maze.set_square_size(800 // maze.get_size())
+    for i in range(maze.get_size()):
+        grid.append([])
+        for j in range(maze.get_size()):
+            cost = 0
+            x1, y1 = maze.get_start()
+            x2, y2 = maze.get_end()
+            if i == x1 and j == y1:
+                color = ORANGE
+                cost = maze.get_matrix()[i][j]
+            elif i == x2 and j == y2:
+                color = TURQUOISE
+                cost = maze.get_matrix()[i][j]
+            elif maze.get_matrix()[i][j] == -1:
+                color = BLACK
+            else:
+                color = WHITE
+                cost = maze.get_matrix()[i][j]
+
+            node = Node(x=i, y=j, color=color, cost=cost)
+            grid[i].append(node)
+
+    maze.set_grid(grid)
+
 
 def start_maze():
     maze.run()
@@ -54,7 +88,7 @@ def start_maze():
 
 import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f41', fg='#a9b7c6', bd=0,
                        font=("JetBrains Mono", 18))
-start_button = Button(root, text="Start Maze",command=start_maze, bg='#3c3f41', fg='#a9b7c6', bd=0, state=DISABLED,
+start_button = Button(root, text="Start Maze", command=start_maze, bg='#3c3f41', fg='#a9b7c6', bd=0, state=DISABLED,
                       font=("JetBrains Mono", 18))
 # start_button['state'] = NORMAL    TO CHANGE BUTTON STATE
 
