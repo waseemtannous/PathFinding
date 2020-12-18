@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import filedialog, Text
+from tkinter import filedialog
 from AlgorithmType import *
 from Point import Point
 from Maze import Maze
@@ -7,7 +7,7 @@ from Maze import Maze
 root = Tk()  # main window
 root.title("Path Finding")
 root.configure(background='#2b2b2b')
-root.geometry("500x400")  # width X height
+root.geometry("300x300")  # width X height
 root.resizable(False, False)
 file = None
 global maze
@@ -15,7 +15,7 @@ global maze
 
 
 
-def import_file():
+def import_file():  # a function to read a text file and analyze it
     global algo_type
     file = filedialog.askopenfilename(initialdir="/", title="Select File",
                                       filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
@@ -55,13 +55,8 @@ import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f4
                        font=("JetBrains Mono", 18))
 start_button = Button(root, text="Start Maze", bg='#3c3f41', fg='#a9b7c6', bd=0, state=DISABLED, font=("JetBrains Mono", 18))
 # start_button['state'] = NORMAL    TO CHANGE BUTTON STATE
-output_label = Label(root, text="Output:", bg='#2b2b2b', fg='#a9b7c6', font=("JetBrains Mono", 18))
-output_text = Text(root, height=2, width=30)
-# output_text.insert(END, "string")   ADD TEXT (THE RESULT)
 
-import_button.grid(row=0, column=0, padx=180, pady=20)
-start_button.grid(row=1, column=0, padx=180, pady=20)
-output_label.grid(row=2, column=0, padx=180, pady=20)
-output_text.grid(row=3, column=0, padx=10, pady=20)
+import_button.grid(row=0, column=0, padx=50, pady=20)
+start_button.grid(row=1, column=0, padx=50, pady=20)
 
 root.mainloop()  # display window
