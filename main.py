@@ -12,8 +12,6 @@ root.configure(background='#2b2b2b')
 root.geometry("300x300")  # width X height
 root.resizable(False, False)
 
-width = 800
-
 
 
 def import_file():  # a function to read a text file and analyze it
@@ -33,7 +31,7 @@ def import_file():  # a function to read a text file and analyze it
     elif first_line == "UCS":
         algo_type = AlgorithmType.UCS
     else:
-        algo_type = AlgorithmType.IDS
+        algo_type = AlgorithmType.UCS
 
     second_line = f.readline()
     size = int(second_line)
@@ -52,6 +50,7 @@ def import_file():  # a function to read a text file and analyze it
 
     f.close()
     make_grid(maze)
+    set_neighbors(maze)
     start_button['state'] = NORMAL
 
 
@@ -81,6 +80,12 @@ def make_grid(maze):
 
     maze.set_grid(grid)
 
+def set_neighbors(maze):
+    grid = maze.get_grid()
+    for row in grid:
+        for node in row:
+            node.set_neighbors(maze)
+
 
 def start_maze():
     maze.run()
@@ -92,7 +97,7 @@ start_button = Button(root, text="Start Maze", command=start_maze, bg='#3c3f41',
                       font=("JetBrains Mono", 18))
 # start_button['state'] = NORMAL    TO CHANGE BUTTON STATE
 
-import_button.grid(row=0, column=0, padx=50, pady=20)
-start_button.grid(row=1, column=0, padx=50, pady=20)
+import_button.grid(row=0, column=0, padx=70, pady=50)
+start_button.grid(row=1, column=0, padx=70, pady=50)
 
 root.mainloop()  # display window

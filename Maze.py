@@ -13,6 +13,7 @@ class Maze:
         self.matrix = matrix
 
     def run(self):
+        Algorithms.draw(self)
         if self.algotype == AlgorithmType.ASTAR:
             Algorithms.astar(self)
         elif self.algotype == AlgorithmType.IDASTAR:
