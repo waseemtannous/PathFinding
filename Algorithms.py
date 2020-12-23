@@ -1,8 +1,10 @@
 from queue import PriorityQueue
 
 import pygame
+import time
 
 from Colors import *
+
 
 PATH = []
 WIDTH = 800
@@ -14,7 +16,6 @@ visited_nodes = []
 
 
 def draw(maze):
-
     pygame.display.set_caption("Path Finding")
 
     # make background white
@@ -29,9 +30,9 @@ def draw(maze):
 
     draw_grid(maze=maze)
 
-
     # display on the screen
     pygame.display.update()
+
 
 def draw_grid(maze):
     for i in range(maze.get_size()):
@@ -54,15 +55,17 @@ def astar(maze):
 
 
 # depth limited search
-def dls(start, end, max_depth, maze, visited):
+def dls(start, end, max_depth, maze, visited, steps):
     if start == end: return True
 
     # If reached the maximum depth, stop recursing.
     if max_depth <= 0: return False
 
+    # change node color
     for node in start.get_neighbors():
-        if visited.get((node, max_depth), False):
-            continue
+        if node in visited:
+            if visited.get(node) <= steps:
+                continue
         node.make_open()
         pygame.draw.rect(WINDOW, node.color, (
             node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
@@ -72,9 +75,9 @@ def dls(start, end, max_depth, maze, visited):
 
     # Recur for all the vertices adjacent to this vertex
     for node in start.get_neighbors():
-        if visited.get((node, max_depth), False):
-        
-            continue
+        if node in visited:
+            if visited.get(node) <= steps:
+                continue
         if (node.get_x(), node.get_y()) != maze.get_start():
             node.make_closed()
         pygame.draw.rect(WINDOW, node.color, (
@@ -82,9 +85,9 @@ def dls(start, end, max_depth, maze, visited):
             maze.get_square_size()))
         draw_grid(maze=maze)
         pygame.display.update()
-        visited[node] = True
-        if dls(node, end, max_depth - 1, maze, visited):
-            node.make_path()
+        visited[node] = steps
+        if dls(node, end, max_depth - 1, maze, visited, steps + 1):
+            # node.make_path()
             PATH.append(node)
             return True
     return False
@@ -131,12 +134,17 @@ def ids(maze):
     start = grid[x1][y1]
     end = grid[x2][y2]
     # depth limit search till max depth
-    max_depth = 100
+    max_depth = 100  # todo change this
+    time_start = time.time()
     for depth in range(max_depth):
         print("iter ", depth)
-        visited = {(start, 0) : True}
-        if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited):
+        visited = {start: 0}
+        if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited, steps=0):
             recreate_path(maze)
+            time_end = time.time()
+            print("time in sec: ", time_end - time_start)
+            for node in PATH:
+                print(node.get_x() , ", " , node.get_y())
             return True
         for row in grid:
             for node in row:
@@ -154,8 +162,10 @@ def ids(maze):
                     maze.get_square_size()))
         start.make_start()
         end.make_end()
-        draw_grid(maze=maze)
-        pygame.display.update()
+        # draw_grid(maze=maze)
+        # pygame.display.update()
+    time_end = time.time()
+    print("time in sec: ", time_end - time_start)
     return False
 
 
@@ -202,7 +212,6 @@ def ucs(maze):
                     maze.get_square_size()))
                 draw_grid(maze=maze)
                 pygame.display.update()
-
 
 
 def idAstar(maze):
