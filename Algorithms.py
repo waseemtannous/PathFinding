@@ -54,74 +54,75 @@ def astar(maze):
 
 
 # depth limited search
-# def dls(start, end, max_depth, maze, visited):
-#     if start == end: return True
-#
-#     # If reached the maximum depth, stop recursing.
-#     if max_depth <= 0: return False
-#
-#     for node in start.get_neighbors():
-#         if visited.get((node, max_depth), False):
-#             continue
-#         node.make_open()
-#         pygame.draw.rect(WINDOW, node.color, (
-#             node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-#             maze.get_square_size()))
-#         draw_grid(maze=maze)
-#         pygame.display.update()
-#
-#     # Recur for all the vertices adjacent to this vertex
-#     for node in start.get_neighbors():
-#         if visited.get((node, max_depth), False):
-#             continue
-#         if (node.get_x(), node.get_y()) != maze.get_start():
-#             node.make_closed()
-#         pygame.draw.rect(WINDOW, node.color, (
-#             node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-#             maze.get_square_size()))
-#         draw_grid(maze=maze)
-#         pygame.display.update()
-#         visited[node] = True
-#         if dls(node, end, max_depth - 1, maze, visited):
-#             node.make_path()
-#             PATH.append(node)
-#             return True
-#     return False
+def dls(start, end, max_depth, maze, visited):
+    if start == end: return True
 
+    # If reached the maximum depth, stop recursing.
+    if max_depth <= 0: return False
 
-def dls(start, end, max_depth, maze):
-    d = 0
-    global to_visit
-    global expanded_nodes
-    global visited_nodes
-    to_visit.append(start)
-    expanded_nodes.append(start)
-
-    while len(to_visit) != 0:
-        current_node = to_visit.pop()
-        visited_nodes.append(current_node)
-        current_node.make_closed()
-        pygame.draw.rect(WINDOW, current_node.color, (
-            current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
-            maze.get_square_size(),
+    for node in start.get_neighbors():
+        if visited.get((node, max_depth), False):
+            continue
+        node.make_open()
+        pygame.draw.rect(WINDOW, node.color, (
+            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
             maze.get_square_size()))
         draw_grid(maze=maze)
         pygame.display.update()
-        if current_node == end:
+
+    # Recur for all the vertices adjacent to this vertex
+    for node in start.get_neighbors():
+        if visited.get((node, max_depth), False):
+        
+            continue
+        if (node.get_x(), node.get_y()) != maze.get_start():
+            node.make_closed()
+        pygame.draw.rect(WINDOW, node.color, (
+            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
+            maze.get_square_size()))
+        draw_grid(maze=maze)
+        pygame.display.update()
+        visited[node] = True
+        if dls(node, end, max_depth - 1, maze, visited):
+            node.make_path()
+            PATH.append(node)
             return True
-        elif d < max_depth:
-            for neighbor in current_node.get_neighbors():
-                expanded_nodes.append(neighbor)
-                to_visit.append(neighbor)
-                neighbor.make_open()
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
-            d += 1
     return False
+
+
+# def dls(start, end, max_depth, maze):
+#     d = 0
+#     global to_visit
+#     global expanded_nodes
+#     global visited_nodes
+#     to_visit.append(start)
+#     expanded_nodes.append(start)
+#
+#     while len(to_visit) != 0:
+#         current_node = to_visit.pop()
+#         visited_nodes.append(current_node)
+#         current_node.make_closed()
+#         pygame.draw.rect(WINDOW, current_node.color, (
+#             current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
+#             maze.get_square_size(),
+#             maze.get_square_size()))
+#         draw_grid(maze=maze)
+#         pygame.display.update()
+#         if current_node == end:
+#             return True
+#         elif d < max_depth:
+#             for neighbor in current_node.get_neighbors():
+#                 expanded_nodes.append(neighbor)
+#                 to_visit.append(neighbor)
+#                 neighbor.make_open()
+#                 pygame.draw.rect(WINDOW, neighbor.color, (
+#                     neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
+#                     maze.get_square_size(),
+#                     maze.get_square_size()))
+#                 draw_grid(maze=maze)
+#                 pygame.display.update()
+#             d += 1
+#     return False
 
 def ids(maze):
     grid = maze.get_grid()
@@ -134,7 +135,7 @@ def ids(maze):
     for depth in range(max_depth):
         print("iter ", depth)
         visited = {(start, 0) : True}
-        if dls(start=start, end=end, max_depth=depth, maze=maze):
+        if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited):
             recreate_path(maze)
             return True
         for row in grid:
