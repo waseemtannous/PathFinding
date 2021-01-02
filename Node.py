@@ -122,6 +122,14 @@ class Node:
     def __gt__(self, other):
         return self.f > other.f
 
+    def make_yellow(self):
+        self.color = YELLOW
+    def make_blue(self):
+        self.color = BLUE
+
+    def make_grey(self):
+        self.color = GREY
+
     # def __eq__(self, other):
     #     return (self.get_x(), self.get_y()) == (other.get_x(), other.get_y())
 
