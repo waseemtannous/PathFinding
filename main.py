@@ -32,7 +32,7 @@ def import_file():  # a function to read a text file and analyze it
     elif first_line == "UCS":
         algo_type = AlgorithmType.UCS
     else:
-        algo_type = AlgorithmType.ASTAR
+        algo_type = AlgorithmType.UCS
 
     second_line = f.readline()
     size = int(second_line)
