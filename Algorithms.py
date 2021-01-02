@@ -2,9 +2,10 @@ from queue import PriorityQueue
 
 import pygame
 import time
+import heapq
+import math
 
 from Colors import *
-
 
 PATH = []
 WIDTH = 800
@@ -50,8 +51,90 @@ def recreate_path(maze):
         pygame.display.update()
 
 
+def calculate_f_cost(node, end):
+    heuristic = heuristic1(node=node, end=end)
+    node.set_h(heuristic)
+    node.calculate_f()
+
+
 def astar(maze):
-    pass
+    time_start = time.time()
+    open_heap = []
+
+    open_dictionary = {}
+    closed_dictionary = {}
+
+    x1, y1 = maze.get_start()
+    x2, y2 = maze.get_end()
+
+    start_node = maze.get_grid()[x1][y1]
+    end_node = maze.get_grid()[x2][y2]
+
+    calculate_f_cost(node=start_node, end=end_node)
+    heapq.heappush(open_heap, start_node)
+    open_dictionary[start_node] = True
+
+    while len(open_heap) != 0:
+        current_node = heapq.heappop(open_heap)
+        current_node.make_closed()
+        open_dictionary[current_node] = False
+        closed_dictionary[current_node] = True
+        pygame.draw.rect(WINDOW, current_node.color, (
+            current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
+            maze.get_square_size(),
+            maze.get_square_size()))
+        draw_grid(maze=maze)
+        pygame.display.update()
+        if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
+            cost = current_node.get_g()
+            while current_node.get_parent() != None:
+                PATH.append(current_node)
+                current_node.make_path()
+                pygame.draw.rect(WINDOW, current_node.color, (
+                    current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
+                    maze.get_square_size(),
+                    maze.get_square_size()))
+                draw_grid(maze=maze)
+                pygame.display.update()
+                current_node = current_node.get_parent()
+                time_end = time.time()
+                print("time in sec: ", time_end - time_start)
+            print("cost = ", cost)
+            return True
+        for neighbor in current_node.get_neighbors():
+            neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
+            if open_dictionary.get(neighbor, False):
+                if neighbor.get_g() <= neighbor_current_cost: continue
+            elif closed_dictionary.get(neighbor, False):
+                if neighbor.get_g() <= neighbor_current_cost: continue
+                closed_dictionary[neighbor] = False
+                neighbor.set_g(neighbor_current_cost)
+                neighbor.set_parent(current_node)
+                calculate_f_cost(neighbor, end_node)
+                heapq.heapify(open_heap)
+                neighbor.make_open()
+                open_dictionary[neighbor] = True
+                pygame.draw.rect(WINDOW, neighbor.color, (
+                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
+                    maze.get_square_size(),
+                    maze.get_square_size()))
+                draw_grid(maze=maze)
+                pygame.display.update()
+            else:
+                neighbor.set_g(neighbor_current_cost)
+                neighbor.set_parent(current_node)
+                calculate_f_cost(neighbor, end_node)
+                heapq.heappush(open_heap, neighbor)
+                neighbor.make_open()
+                open_dictionary[neighbor] = True
+                pygame.draw.rect(WINDOW, neighbor.color, (
+                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
+                    maze.get_square_size(),
+                    maze.get_square_size()))
+                draw_grid(maze=maze)
+                pygame.display.update()
+
+    return False
 
 
 # depth limited search
@@ -62,70 +145,36 @@ def dls(start, end, max_depth, maze, visited, steps):
     if max_depth <= 0: return False
 
     # change node color
-    for node in start.get_neighbors():
-        if node in visited:
-            if visited.get(node) <= steps:
-                continue
-        node.make_open()
-        pygame.draw.rect(WINDOW, node.color, (
-            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
+    # for node in start.get_neighbors():
+    #     if node in visited:
+    #         if visited.get(node) <= steps:
+    #             continue
+    #     node.make_open()
+    #     pygame.draw.rect(WINDOW, node.color, (
+    #         node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
+    #         maze.get_square_size()))
+    #     draw_grid(maze=maze)
+    #     pygame.display.update()
 
     # Recur for all the vertices adjacent to this vertex
     for node in start.get_neighbors():
         if node in visited:
             if visited.get(node) <= steps:
                 continue
-        if (node.get_x(), node.get_y()) != maze.get_start():
-            node.make_closed()
-        pygame.draw.rect(WINDOW, node.color, (
-            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
+        # if (node.get_x(), node.get_y()) != maze.get_start():
+        #     node.make_closed()
+        # pygame.draw.rect(WINDOW, node.color, (
+        #     node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
+        #     maze.get_square_size()))
+        # draw_grid(maze=maze)
+        # pygame.display.update()
         visited[node] = steps
         if dls(node, end, max_depth - 1, maze, visited, steps + 1):
             # node.make_path()
-            PATH.append(node)
+            # PATH.append(node)
             return True
     return False
 
-
-# def dls(start, end, max_depth, maze):
-#     d = 0
-#     global to_visit
-#     global expanded_nodes
-#     global visited_nodes
-#     to_visit.append(start)
-#     expanded_nodes.append(start)
-#
-#     while len(to_visit) != 0:
-#         current_node = to_visit.pop()
-#         visited_nodes.append(current_node)
-#         current_node.make_closed()
-#         pygame.draw.rect(WINDOW, current_node.color, (
-#             current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
-#             maze.get_square_size(),
-#             maze.get_square_size()))
-#         draw_grid(maze=maze)
-#         pygame.display.update()
-#         if current_node == end:
-#             return True
-#         elif d < max_depth:
-#             for neighbor in current_node.get_neighbors():
-#                 expanded_nodes.append(neighbor)
-#                 to_visit.append(neighbor)
-#                 neighbor.make_open()
-#                 pygame.draw.rect(WINDOW, neighbor.color, (
-#                     neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-#                     maze.get_square_size(),
-#                     maze.get_square_size()))
-#                 draw_grid(maze=maze)
-#                 pygame.display.update()
-#             d += 1
-#     return False
 
 def ids(maze):
     grid = maze.get_grid()
@@ -137,31 +186,34 @@ def ids(maze):
     max_depth = 100  # todo change this
     time_start = time.time()
     for depth in range(max_depth):
-        print("iter ", depth)
+        # print("iter ", depth)
         visited = {start: 0}
         if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited, steps=0):
-            recreate_path(maze)
+            # recreate_path(maze)
             time_end = time.time()
             print("time in sec: ", time_end - time_start)
-            for node in PATH:
-                print(node.get_x() , ", " , node.get_y())
+            # cost = 0
+            # for node in PATH:
+            #     cost += node.get_cost()
+            #     print(node.get_x(), ", ", node.get_y())
+            # print(cost)
             return True
-        for row in grid:
-            for node in row:
-                if node.get_cost() == 0:
-                    node.make_barrier()
-                elif node == start:
-                    node.make_start()
-                elif node == end:
-                    node.make_end()
-                else:
-                    node.reset()
-                pygame.draw.rect(WINDOW, node.color, (
-                    node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-        start.make_start()
-        end.make_end()
+        # for row in grid:
+        #     for node in row:
+        #         if node.get_cost() == 0:
+        #             node.make_barrier()
+        #         elif node == start:
+        #             node.make_start()
+        #         elif node == end:
+        #             node.make_end()
+        #         else:
+        #             node.reset()
+        #         pygame.draw.rect(WINDOW, node.color, (
+        #             node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
+        #             maze.get_square_size(),
+        #             maze.get_square_size()))
+        # start.make_start()
+        # end.make_end()
         # draw_grid(maze=maze)
         # pygame.display.update()
     time_end = time.time()
@@ -222,9 +274,20 @@ def biAstar(maze):
     pass
 
 
-def heuristic1():
-    return 0
+def heuristic1(node, end):
+    dx = abs(node.get_x() - end.get_x())
+    dy = abs(node.get_y() - end.get_y())
+
+    # min_cost = int("inf")
+    # for neighbor in node.get_neighbors():
+    #     neighbor_cost = neighbor.get_cost()
+    #     if neighbor_cost < min_cost:
+    #         min_cost = neighbor_cost
+
+    diagonal_cost = 0
 
 
-def heuristic2():
+    return (dx + dy) * 5.703
+
+def heuristic2(node, end):
     return 0

@@ -2,11 +2,15 @@ from Colors import *
 
 class Node:
     def __init__(self, x, y, color, cost):
+        self.parent = None
         self.x = x
         self.y = y
         self.color = color
         self.cost = cost
         self.neighbors = []
+        self.g = 0
+        self.h = 0
+        self.f = 0
 
     def get_x(self):
         return self.x
@@ -59,6 +63,30 @@ class Node:
     def get_neighbors(self):
         return self.neighbors
 
+    def get_h(self):
+        return self.h
+
+    def get_f(self):
+        return self.f
+
+    def set_h(self, h):
+        self.h = h
+
+    def get_g(self):
+        return self.g
+
+    def set_g(self, g):
+        self.g = g
+
+    def calculate_f(self):
+        self.f = self.g + self.h
+
+    def get_parent(self):
+        return self.parent
+
+    def set_parent(self, parent):
+        self.parent = parent
+
     def set_neighbors(self, maze):
         grid = maze.get_grid()
         self.neighbors = []
@@ -88,6 +116,15 @@ class Node:
 
         # self.neighbors.sort(key=get_cost)
 
+    def __lt__(self, other):
+        return self.f < other.f
+
+    def __gt__(self, other):
+        return self.f > other.f
+
+    # def __eq__(self, other):
+    #     return (self.get_x(), self.get_y()) == (other.get_x(), other.get_y())
 
 def get_cost(node):
+
     return node.get_cost()

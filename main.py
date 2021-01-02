@@ -18,7 +18,8 @@ def import_file():  # a function to read a text file and analyze it
     global maze
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    file = "C:\\Users\\waseem tannous\\Desktop\\matrix.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\big maze.txt"
+    file = "C:\\Users\\waseem tannous\\Desktop\\ab.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -31,7 +32,7 @@ def import_file():  # a function to read a text file and analyze it
     elif first_line == "UCS":
         algo_type = AlgorithmType.UCS
     else:
-        algo_type = AlgorithmType.IDS
+        algo_type = AlgorithmType.ASTAR
 
     second_line = f.readline()
     size = int(second_line)
@@ -45,6 +46,21 @@ def import_file():  # a function to read a text file and analyze it
     end = (arr[0], arr[1])
 
     matrix = [[int(num) for num in line.split(',')] for line in f if line.strip(' ') != ""]
+
+    average = 0
+    minimum = matrix[0][0]
+
+    for row in matrix:
+        for num in row:
+            average += num
+            if num != -1 and num < minimum:
+                minimum = num
+
+
+    average /= (size * size)
+
+    print("average ", average)
+    print("minimum ", minimum)
 
     maze = Maze(algotype=algo_type, size=size, start=start, end=end, matrix=matrix)
 
