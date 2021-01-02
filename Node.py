@@ -134,5 +134,4 @@ class Node:
     #     return (self.get_x(), self.get_y()) == (other.get_x(), other.get_y())
 
 def get_cost(node):
-
     return node.get_cost()

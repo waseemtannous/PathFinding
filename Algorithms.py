@@ -3,8 +3,6 @@ from queue import PriorityQueue
 import pygame
 import time
 import heapq
-import math
-import Colors
 
 from Colors import *
 
@@ -43,6 +41,15 @@ def draw_grid(maze):
             pygame.draw.line(WINDOW, GREY, (j * maze.get_square_size(), 0), (j * maze.get_square_size(), WIDTH))
 
 
+def draw_node(maze, node):
+    pygame.draw.rect(WINDOW, node.color, (
+        node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
+        maze.get_square_size(),
+        maze.get_square_size()))
+    draw_grid(maze=maze)
+    pygame.display.update()
+
+
 def recreate_path(maze):
     for node in PATH:
         pygame.draw.rect(WINDOW, node.color, (
@@ -62,6 +69,8 @@ def astar(maze):
     time_start = time.time()
     open_heap = []
 
+    num_of_nodes = 0
+
     open_dictionary = {}
     closed_dictionary = {}
 
@@ -74,38 +83,37 @@ def astar(maze):
     calculate_f_cost(node=start_node, end=end_node)
     heapq.heappush(open_heap, start_node)
     open_dictionary[start_node] = True
+    num_of_nodes += 1
 
     while len(open_heap) != 0:
         current_node = heapq.heappop(open_heap)
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        pygame.draw.rect(WINDOW, current_node.color, (
-            current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
-            maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
+        draw_node(maze, current_node)
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
             cost = current_node.get_g()
             while current_node.get_parent() != None:
                 PATH.append(current_node)
                 current_node.make_path()
-                pygame.draw.rect(WINDOW, current_node.color, (
-                    current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
+                draw_node(maze, current_node)
                 current_node = current_node.get_parent()
                 time_end = time.time()
                 print("time in sec: ", time_end - time_start)
             print("cost = ", cost)
+            print("num of nodes: ", num_of_nodes)
             return True
         for neighbor in current_node.get_neighbors():
             neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
             if open_dictionary.get(neighbor, False):
                 if neighbor.get_g() <= neighbor_current_cost: continue
+                neighbor.set_g(neighbor_current_cost)
+                neighbor.set_parent(current_node)
+                calculate_f_cost(neighbor, end_node)
+                heapq.heapify(open_heap)
+                neighbor.make_open()
+                num_of_nodes += 1
+                draw_node(maze, neighbor)
             elif closed_dictionary.get(neighbor, False):
                 if neighbor.get_g() <= neighbor_current_cost: continue
                 closed_dictionary[neighbor] = False
@@ -115,12 +123,8 @@ def astar(maze):
                 heapq.heapify(open_heap)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
+                num_of_nodes += 1
+                draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
@@ -128,12 +132,8 @@ def astar(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
+                num_of_nodes += 1
+                draw_node(maze, neighbor)
 
     return False
 
@@ -289,11 +289,11 @@ def idAstar(maze):
             threshold = temp
 
 
-def idastar_helper(maze, node, end_node, g, threshold, cost_dictionary):
+def idastar_helper(maze, node, end_node, g, threshold, visited):
     calculate_f_cost(node, end_node)
     f = node.get_f()
 
-    cost_dictionary[node] = True
+    visited[node] = True
 
     if node.get_x() == end_node.get_x() and node.get_y() == end_node.get_y():
         return (-1) * f  # returns negative if found
@@ -305,12 +305,12 @@ def idastar_helper(maze, node, end_node, g, threshold, cost_dictionary):
 
     for neighbor in node.get_neighbors():
         current_g_cost = g + neighbor.get_cost()
-        if cost_dictionary.get(neighbor, False):
+        if visited.get(neighbor, False):
             if current_g_cost < neighbor.get_g():
                 neighbor.set_g(current_g_cost)
             else:
                 continue
-        temp = idastar_helper(maze, neighbor, end_node, current_g_cost, threshold, cost_dictionary)
+        temp = idastar_helper(maze, neighbor, end_node, current_g_cost, threshold, visited)
         if temp < 0:
             PATH.append(neighbor)
             return temp
@@ -349,174 +349,92 @@ def biAstar(maze):
     came_from_start = {}
     came_from_end = {}
 
-
     while len(open_heap_start) != 0 and len(open_heap_end) != 0:
         current_node = heapq.heappop(open_heap_start)
         current_node.make_closed()
         open_dictionary_start[current_node] = False
         closed_dictionary_start[current_node] = True
-        pygame.draw.rect(WINDOW, current_node.color, (
-            current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
-            maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
+        draw_node(maze, current_node)
         if closed_dictionary_end.get(current_node, False):
             cost = current_node.get_g()
             current_node.make_grey()
-            pygame.draw.rect(WINDOW, current_node.color, (
-                current_node.get_y() * maze.get_square_size(), current_node.get_x() * maze.get_square_size(),
-                maze.get_square_size(),
-                maze.get_square_size()))
-            draw_grid(maze=maze)
-            pygame.display.update()
+            draw_node(maze, current_node)
             recreate_bidirectional_path(maze, current_node, came_from_start, came_from_end)
-            time_end = time.time()
-            print("cost = ", cost)
             return True
-        for neighbor in current_node.get_neighbors():
-            neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
-            if open_dictionary_start.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
-            elif closed_dictionary_start.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
-                closed_dictionary_start[neighbor] = False
-                neighbor.set_g(neighbor_current_cost)
-                came_from_start[neighbor] = current_node
-                calculate_f_cost(neighbor, end_node)
-                heapq.heapify(open_heap_start)
-                neighbor.make_open()
-                open_dictionary_start[neighbor] = True
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
-            else:
-                neighbor.set_g(neighbor_current_cost)
-                came_from_start[neighbor] = current_node
-                calculate_f_cost(neighbor, end_node)
-                heapq.heappush(open_heap_start, neighbor)
-                neighbor.make_open()
-                open_dictionary_start[neighbor] = True
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
+        biAstar_helper(maze, current_node, end_node, open_dictionary_start, closed_dictionary_start, came_from_start, open_heap_start)
 
-    #   second one #######################
+        #   second one #######################
         current_node2 = heapq.heappop(open_heap_end)
         # current_node2.make_closed()
         current_node2.make_blue()
         open_dictionary_end[current_node2] = False
         closed_dictionary_end[current_node2] = True
-        pygame.draw.rect(WINDOW, current_node2.color, (
-            current_node2.get_y() * maze.get_square_size(), current_node2.get_x() * maze.get_square_size(),
-            maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
+        draw_node(maze, current_node2)
         if closed_dictionary_start.get(current_node2, False):
             cost = current_node2.get_g()
             current_node2.make_grey()
-            pygame.draw.rect(WINDOW, current_node2.color, (
-                current_node2.get_y() * maze.get_square_size(), current_node2.get_x() * maze.get_square_size(),
-                maze.get_square_size(),
-                maze.get_square_size()))
-            draw_grid(maze=maze)
-            pygame.display.update()
+            draw_node(maze, current_node2)
             recreate_bidirectional_path(maze, current_node2, came_from_start, came_from_end)
             time_end = time.time()
             print("cost = ", cost)
             return True
-        for neighbor in current_node2.get_neighbors():
-            neighbor_current_cost = current_node2.get_g() + neighbor.get_cost()
-            if open_dictionary_end.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
-            elif closed_dictionary_end.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
-                closed_dictionary_end[neighbor] = False
-                neighbor.set_g(neighbor_current_cost)
-                came_from_end[neighbor] = current_node2
-                calculate_f_cost(neighbor, start_node)
-                heapq.heapify(open_heap_end)
-                # neighbor.make_open()
-                neighbor.make_yellow()
-                open_dictionary_end[neighbor] = True
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
-            else:
-                neighbor.set_g(neighbor_current_cost)
-                came_from_end[neighbor] = current_node2
-                calculate_f_cost(neighbor, start_node)
-                heapq.heappush(open_heap_end, neighbor)
-                # neighbor.make_open()
-                neighbor.make_yellow()
-                open_dictionary_end[neighbor] = True
-                pygame.draw.rect(WINDOW, neighbor.color, (
-                    neighbor.get_y() * maze.get_square_size(), neighbor.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
+        biAstar_helper(maze, current_node2, start_node, open_dictionary_end, closed_dictionary_end, came_from_end, open_heap_end)
 
     return False
 
+
+def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_dictionary, came_from, open_heap):
+    for neighbor in current_node.get_neighbors():
+        neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
+        if open_dictionary.get(neighbor, False):
+            if neighbor.get_g() <= neighbor_current_cost: continue
+            neighbor.set_g(neighbor_current_cost)
+            came_from[neighbor] = current_node
+            calculate_f_cost(neighbor, end_node)
+            heapq.heapify(open_heap)
+            neighbor.make_open()
+            draw_node(maze, neighbor)
+        elif closed_dictionary.get(neighbor, False):
+            if neighbor.get_g() <= neighbor_current_cost: continue
+            closed_dictionary[neighbor] = False
+            neighbor.set_g(neighbor_current_cost)
+            came_from[neighbor] = current_node
+            calculate_f_cost(neighbor, end_node)
+            heapq.heapify(open_heap)
+            neighbor.make_open()
+            open_dictionary[neighbor] = True
+            draw_node(maze, neighbor)
+        else:
+            neighbor.set_g(neighbor_current_cost)
+            came_from[neighbor] = current_node
+            calculate_f_cost(neighbor, end_node)
+            heapq.heappush(open_heap, neighbor)
+            neighbor.make_open()
+            open_dictionary[neighbor] = True
+            draw_node(maze, neighbor)
+
 def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
     node.make_path()
-    pygame.draw.rect(WINDOW, node.color, (
-        node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-        maze.get_square_size(),
-        maze.get_square_size()))
-    draw_grid(maze=maze)
-    pygame.display.update()
+    draw_node(maze, node)
 
     node_x = node.get_x()
     node_y = node.get_y()
 
-    counter = 0
     while node in came_from_start:
-        time.sleep(0.25)
         node = came_from_start[node]
+        node.make_path()
         PATH.append(node)
-        if (counter // 2) == 0:
-            node.make_barrier()
-        if (counter // 2) == 1:
-            node.make_path()
-        counter += 1
-        pygame.draw.rect(WINDOW, node.color, (
-            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-            maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
-        # if end_node in came_from_start:
-        #     break
+        node.make_path()
+        draw_node(maze, node)
 
     node = maze.get_grid()[node_x][node_y]
 
     while node in came_from_end:
-        # time.sleep(0.25)
         node = came_from_end[node]
+        node.make_path()
         PATH.append(node)
         node.make_path()
-        pygame.draw.rect(WINDOW, node.color, (
-            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-            maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
-        # if end_node in came_from_start:
-        #     break
-
-
+        draw_node(maze, node)
 
 
 def heuristic1(node, end):

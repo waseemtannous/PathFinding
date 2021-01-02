@@ -18,9 +18,9 @@ def import_file():  # a function to read a text file and analyze it
     global maze
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    file = "S:\\onedrive\\sync\\pythonAI\\big maze.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\big maze.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\small maze.txt"
-    # file = "C:\\Users\\waseem tannous\\Desktop\\ab.txt"
+    file = "C:\\Users\\waseem tannous\\Desktop\\ab.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
