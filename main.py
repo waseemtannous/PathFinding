@@ -18,22 +18,23 @@ def import_file():  # a function to read a text file and analyze it
     global maze
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    # file = "S:\\onedrive\\sync\\pythonAI\\big maze.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\small maze.txt"
-    file = "C:\\Users\\waseem tannous\\Desktop\\ab.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
-    if first_line == "BIASTAR":
+    if first_line == 'BIASTAR\n':
         algo_type = AlgorithmType.BIASTAR
-    elif first_line == "IDASTAR":
+    elif first_line == 'IDASTAR\n':
         algo_type = AlgorithmType.IDASTAR
-    elif first_line == "ASTAR":
+    elif first_line == 'ASTAR\n':
         algo_type = AlgorithmType.ASTAR
-    elif first_line == "UCS":
+    elif first_line == 'UCS\n':
         algo_type = AlgorithmType.UCS
     else:
-        algo_type = AlgorithmType.BIASTAR
+        algo_type = AlgorithmType.IDS
 
     second_line = f.readline()
     size = int(second_line)

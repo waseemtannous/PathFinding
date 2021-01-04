@@ -117,9 +117,13 @@ class Node:
         # self.neighbors.sort(key=get_cost)
 
     def __lt__(self, other):
+        if self.f == other.f:
+            return self.h < other.h
         return self.f < other.f
 
     def __gt__(self, other):
+        if self.f == other.f:
+            return self.h > other.h
         return self.f > other.f
 
     def make_yellow(self):
@@ -130,8 +134,26 @@ class Node:
     def make_grey(self):
         self.color = GREY
 
-    # def __eq__(self, other):
-    #     return (self.get_x(), self.get_y()) == (other.get_x(), other.get_y())
+    def direction(self, other): # self = parent, other = neighbor
+        dx = other.get_x() - self.get_x()
+        dy = other.get_y() - self.get_y()
+
+        if dx == -1 and dy == 0:
+            return "U"
+        if dx == -1 and dy == 1:
+            return "RU"
+        if dx == 0 and dy == 1:
+            return "R"
+        if dx == 1 and dy == 1:
+            return "RD"
+        if dx == 1 and dy == 0:
+            return "D"
+        if dx == 1 and dy == -1:
+            return "LD"
+        if dx == 0 and dy == -1:
+            return "L"
+        if dx == -1 and dy == -1:
+            return "LU"
 
 def get_cost(node):
     return node.get_cost()

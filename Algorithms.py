@@ -1,12 +1,13 @@
-from queue import PriorityQueue
-
 import pygame
 import time
 import heapq
+import math
 
 from Colors import *
 
 PATH = []
+number_of_expanded_nodes = 0
+
 WIDTH = 800
 WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
 
@@ -58,6 +59,22 @@ def recreate_path(maze):
         draw_grid(maze=maze)
         pygame.display.update()
 
+def print_path():
+    node = PATH.pop()
+    cost = 0
+    print(len(PATH))
+    while len(PATH) != 0:
+        next_node = PATH.pop()
+        cost += next_node.get_cost()
+        if len(PATH) == 0:
+            print(node.direction(next_node), end=" ")
+        else:
+            print(node.direction(next_node), ", ", end=" ")
+        node = next_node
+    print(cost, end=" ")
+    print(number_of_expanded_nodes, end=" ")
+
+
 
 def calculate_f_cost(node, end):
     heuristic = heuristic1(node=node, end=end)
@@ -66,10 +83,9 @@ def calculate_f_cost(node, end):
 
 
 def astar(maze):
+    global number_of_expanded_nodes
     time_start = time.time()
     open_heap = []
-
-    num_of_nodes = 0
 
     open_dictionary = {}
     closed_dictionary = {}
@@ -83,26 +99,27 @@ def astar(maze):
     calculate_f_cost(node=start_node, end=end_node)
     heapq.heappush(open_heap, start_node)
     open_dictionary[start_node] = True
-    num_of_nodes += 1
+
+
 
     while len(open_heap) != 0:
         current_node = heapq.heappop(open_heap)
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        draw_node(maze, current_node)
+        # draw_node(maze, current_node)
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
-            cost = current_node.get_g()
             while current_node.get_parent() != None:
                 PATH.append(current_node)
                 current_node.make_path()
                 draw_node(maze, current_node)
                 current_node = current_node.get_parent()
-                time_end = time.time()
-                print("time in sec: ", time_end - time_start)
-            print("cost = ", cost)
-            print("num of nodes: ", num_of_nodes)
+            PATH.append(start_node)
+            time_end = time.time()
+            print_path()
+            print("time in sec: ", time_end - time_start)
             return True
+        number_of_expanded_nodes += 1
         for neighbor in current_node.get_neighbors():
             neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
             if open_dictionary.get(neighbor, False):
@@ -112,8 +129,7 @@ def astar(maze):
                 calculate_f_cost(neighbor, end_node)
                 heapq.heapify(open_heap)
                 neighbor.make_open()
-                num_of_nodes += 1
-                draw_node(maze, neighbor)
+                # draw_node(maze, neighbor)
             elif closed_dictionary.get(neighbor, False):
                 if neighbor.get_g() <= neighbor_current_cost: continue
                 closed_dictionary[neighbor] = False
@@ -123,8 +139,7 @@ def astar(maze):
                 heapq.heapify(open_heap)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                num_of_nodes += 1
-                draw_node(maze, neighbor)
+                # draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
@@ -132,14 +147,14 @@ def astar(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                num_of_nodes += 1
-                draw_node(maze, neighbor)
+                # draw_node(maze, neighbor)
 
     return False
 
 
 # depth limited search
 def dls(start, end, max_depth, maze, visited, steps):
+    global number_of_expanded_nodes
     if start == end: return True
 
     # If reached the maximum depth, stop recursing.
@@ -157,13 +172,14 @@ def dls(start, end, max_depth, maze, visited, steps):
     #     draw_grid(maze=maze)
     #     pygame.display.update()
 
+    number_of_expanded_nodes += 1
     # Recur for all the vertices adjacent to this vertex
     for node in start.get_neighbors():
         if node in visited:
             if visited.get(node) <= steps:
                 continue
-        # if (node.get_x(), node.get_y()) != maze.get_start():
-        #     node.make_closed()
+        if (node.get_x(), node.get_y()) != maze.get_start():
+            node.make_closed()
         # pygame.draw.rect(WINDOW, node.color, (
         #     node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
         #     maze.get_square_size()))
@@ -171,8 +187,9 @@ def dls(start, end, max_depth, maze, visited, steps):
         # pygame.display.update()
         visited[node] = steps
         if dls(node, end, max_depth - 1, maze, visited, steps + 1):
-            # node.make_path()
-            # PATH.append(node)
+            node.make_path()
+            draw_node(maze, node)
+            PATH.append(node)
             return True
     return False
 
@@ -187,17 +204,13 @@ def ids(maze):
     max_depth = 100  # todo change this
     time_start = time.time()
     for depth in range(max_depth):
-        # print("iter ", depth)
         visited = {start: 0}
         if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited, steps=0):
             # recreate_path(maze)
             time_end = time.time()
             print("time in sec: ", time_end - time_start)
-            # cost = 0
-            # for node in PATH:
-            #     cost += node.get_cost()
-            #     print(node.get_x(), ", ", node.get_y())
-            # print(cost)
+            PATH.append(start)
+            print_path()
             return True
         # for row in grid:
         #     for node in row:
@@ -223,48 +236,68 @@ def ids(maze):
 
 
 def ucs(maze):
-    frontier = PriorityQueue()  # Min heap so we choose the cheapest edge
-    visited = set([])  # Keeps the visited nodes and prevent duplicates
-    grid = maze.get_grid()
+    global number_of_expanded_nodes
+    time_start = time.time()
+    open_heap = []
+
+    open_dictionary = {}
+    closed_dictionary = {}
+
     x1, y1 = maze.get_start()
     x2, y2 = maze.get_end()
-    start_node = grid[x1][y1]
-    goal_node = grid[x2][y2]
 
-    if start_node == goal_node:
-        return True
+    start_node = maze.get_grid()[x1][y1]
+    end_node = maze.get_grid()[x2][y2]
 
-    path_cost = 0
-    frontier._put((path_cost, start_node))
+    start_node.set_h(0)
+    start_node.calculate_f()
+    heapq.heappush(open_heap, start_node)
+    open_dictionary[start_node] = True
 
-    while True:
-        if frontier._qsize() == 0:  # If we get empty heap that means we cant expand more nodes and gal is not found
-            return False
-
-        current_node = frontier._get()
-        current_node[1].make_closed()
-        pygame.draw.rect(WINDOW, current_node[1].color, (
-            current_node[1].get_y() * maze.get_square_size(), current_node[1].get_x() * maze.get_square_size(),
-            maze.get_square_size(),
-            maze.get_square_size()))
-        draw_grid(maze=maze)
-        pygame.display.update()
-        visited.add(current_node)
-        path_cost = current_node[0]
-
-        if current_node == goal_node:
+    while len(open_heap) != 0:
+        current_node = heapq.heappop(open_heap)
+        current_node.make_closed()
+        open_dictionary[current_node] = False
+        closed_dictionary[current_node] = True
+        # draw_node(maze, current_node)
+        if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
+            while current_node.get_parent() != None:
+                PATH.append(current_node)
+                current_node.make_path()
+                draw_node(maze, current_node)
+                current_node = current_node.get_parent()
+            PATH.append(start_node)
+            time_end = time.time()
+            print_path()
+            print("time in sec: ", time_end - time_start)
             return True
-        else:
-            neighbors = current_node[1].get_neighbors()
-            for node in neighbors:
-                frontier._put(((node.get_cost() + path_cost), node))
-                node.make_open()
-                pygame.draw.rect(WINDOW, node.color, (
-                    node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-                    maze.get_square_size(),
-                    maze.get_square_size()))
-                draw_grid(maze=maze)
-                pygame.display.update()
+        number_of_expanded_nodes += 1
+        for neighbor in current_node.get_neighbors():
+            neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
+            if open_dictionary.get(neighbor, False):
+                if neighbor.get_g() <= neighbor_current_cost: continue
+            elif closed_dictionary.get(neighbor, False):
+                if neighbor.get_g() <= neighbor_current_cost: continue
+                closed_dictionary[neighbor] = False
+                neighbor.set_g(neighbor_current_cost)
+                neighbor.set_parent(current_node)
+                neighbor.set_h(0)
+                neighbor.calculate_f()
+                heapq.heapify(open_heap)
+                neighbor.make_open()
+                open_dictionary[neighbor] = True
+                # draw_node(maze, neighbor)
+            else:
+                neighbor.set_g(neighbor_current_cost)
+                neighbor.set_parent(current_node)
+                neighbor.set_h(0)
+                neighbor.calculate_f()
+                heapq.heappush(open_heap, neighbor)
+                neighbor.make_open()
+                open_dictionary[neighbor] = True
+                # draw_node(maze, neighbor)
+
+    return False
 
 
 def idAstar(maze):
@@ -321,6 +354,8 @@ def idastar_helper(maze, node, end_node, g, threshold, visited):
 
 
 def biAstar(maze):
+    global number_of_expanded_nodes
+    time_start = time.time()
     open_heap_start = []
     open_heap_end = []
 
@@ -354,13 +389,15 @@ def biAstar(maze):
         current_node.make_closed()
         open_dictionary_start[current_node] = False
         closed_dictionary_start[current_node] = True
-        draw_node(maze, current_node)
+        # draw_node(maze, current_node)
         if closed_dictionary_end.get(current_node, False):
             cost = current_node.get_g()
             current_node.make_grey()
-            draw_node(maze, current_node)
+            # draw_node(maze, current_node)
             recreate_bidirectional_path(maze, current_node, came_from_start, came_from_end)
+            print_path()
             return True
+        number_of_expanded_nodes += 1
         biAstar_helper(maze, current_node, end_node, open_dictionary_start, closed_dictionary_start, came_from_start, open_heap_start)
 
         #   second one #######################
@@ -369,15 +406,17 @@ def biAstar(maze):
         current_node2.make_blue()
         open_dictionary_end[current_node2] = False
         closed_dictionary_end[current_node2] = True
-        draw_node(maze, current_node2)
+        # draw_node(maze, current_node2)
         if closed_dictionary_start.get(current_node2, False):
             cost = current_node2.get_g()
             current_node2.make_grey()
-            draw_node(maze, current_node2)
+            # draw_node(maze, current_node2)
             recreate_bidirectional_path(maze, current_node2, came_from_start, came_from_end)
             time_end = time.time()
             print("cost = ", cost)
+            print_path()
             return True
+        number_of_expanded_nodes += 1
         biAstar_helper(maze, current_node2, start_node, open_dictionary_end, closed_dictionary_end, came_from_end, open_heap_end)
 
     return False
@@ -393,7 +432,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             calculate_f_cost(neighbor, end_node)
             heapq.heapify(open_heap)
             neighbor.make_open()
-            draw_node(maze, neighbor)
+            # draw_node(maze, neighbor)
         elif closed_dictionary.get(neighbor, False):
             if neighbor.get_g() <= neighbor_current_cost: continue
             closed_dictionary[neighbor] = False
@@ -403,7 +442,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             heapq.heapify(open_heap)
             neighbor.make_open()
             open_dictionary[neighbor] = True
-            draw_node(maze, neighbor)
+            # draw_node(maze, neighbor)
         else:
             neighbor.set_g(neighbor_current_cost)
             came_from[neighbor] = current_node
@@ -411,23 +450,15 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             heapq.heappush(open_heap, neighbor)
             neighbor.make_open()
             open_dictionary[neighbor] = True
-            draw_node(maze, neighbor)
+            # draw_node(maze, neighbor)
 
 def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
+    PATH.append(node)
     node.make_path()
     draw_node(maze, node)
 
     node_x = node.get_x()
     node_y = node.get_y()
-
-    while node in came_from_start:
-        node = came_from_start[node]
-        node.make_path()
-        PATH.append(node)
-        node.make_path()
-        draw_node(maze, node)
-
-    node = maze.get_grid()[node_x][node_y]
 
     while node in came_from_end:
         node = came_from_end[node]
@@ -436,12 +467,36 @@ def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
         node.make_path()
         draw_node(maze, node)
 
+    PATH.reverse()
+    node = maze.get_grid()[node_x][node_y]
+
+    while node in came_from_start:
+        node = came_from_start[node]
+        node.make_path()
+        PATH.append(node)
+        node.make_path()
+        draw_node(maze, node)
+    node = maze.get_grid()[node_x][node_y]
+    node.make_grey()
+    draw_node(maze, node)
+
+
 
 def heuristic1(node, end):
     dx = abs(node.get_x() - end.get_x())
     dy = abs(node.get_y() - end.get_y())
 
-    return (dx + dy) * 1
+    d1 = 1
+    d2 = math.sqrt(2)
+    d2 = 1
+
+    return (d1 * (dx + dy)) + ((d2 - (2 * d1)) * min(dx, dy))
+
+    # return (dx + dy) * 1
+    # if dx > dy:
+    #     return (14 * dy) + (10 * (dx - dy))
+    # else:
+    #     return (14 * dx) + (10 * (dy - dx))
 
 
 def heuristic2(node, end):
