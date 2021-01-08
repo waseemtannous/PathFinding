@@ -19,6 +19,9 @@ class Maze:
         self.PATH = []
         self.number_of_expanded_nodes = 0
 
+        self.solution_depth = 0
+        self.avg_hval = []
+
     def run(self):
         if self.algotype == AlgorithmType.ASTAR:
             ASTAR.draw(self)
@@ -37,9 +40,20 @@ class Maze:
             BIASTAR.biAstar(self)
 
     def print(self, time):
+        self.solution_depth = len(self.get_path()) - 1
         self.print_path()
-        print(self.number_of_expanded_nodes, end=" ")
         print("time in sec: ", time)
+        print("N = ", self.number_of_expanded_nodes)
+        print("d = ", self.solution_depth)
+        print("EBF = ", pow(self.number_of_expanded_nodes, (1 / self.solution_depth)))
+        avg_hval = 0
+        sum = 0
+        for num in self.avg_hval:
+            sum += num
+        if (self.algotype is AlgorithmType.ASTAR) or (self.algotype is AlgorithmType.IDASTAR) or (self.algotype is AlgorithmType.BIASTAR):
+            avg_hval = sum / len(self.avg_hval)
+            print("avg H value = ", avg_hval)
+
 
     def print_path(self):
         path = self.get_path()
@@ -54,7 +68,8 @@ class Maze:
             else:
                 print(node.direction(next_node), "-", end="")
             node = next_node
-        print(" ", cost, end=" ")
+        print()
+        print("cost = ", cost)
 
     def update_expanded_nodes(self):
         self.number_of_expanded_nodes += 1

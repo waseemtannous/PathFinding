@@ -2,9 +2,6 @@ import pygame
 import time
 from Colors import *
 
-
-
-
 WIDTH = 800
 WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
 
@@ -46,10 +43,12 @@ def draw_node(maze, node):
 
 # depth limited search
 def dls(start, end, max_depth, maze, visited, steps):
-    if start == end: return True
+    if start == end:
+        return True
 
     # If reached the maximum depth, stop recursing.
-    if max_depth <= 0: return False
+    if max_depth <= 0:
+        return False
 
     # change node color
     # for node in start.get_neighbors():

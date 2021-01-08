@@ -5,7 +5,6 @@ import heapq
 from Colors import *
 from Heuristics import *
 
-
 WIDTH = 800
 WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
 
@@ -46,7 +45,6 @@ def draw_node(maze, node):
 
 
 def astar(maze):
-    global number_of_expanded_nodes
     time_start = time.time()
     open_heap = []
 
@@ -59,11 +57,9 @@ def astar(maze):
     start_node = maze.get_grid()[x1][y1]
     end_node = maze.get_grid()[x2][y2]
 
-    calculate_f_cost(node=start_node, end=end_node)
+    calculate_f_cost(maze, node=start_node, end=end_node)
     heapq.heappush(open_heap, start_node)
     open_dictionary[start_node] = True
-
-
 
     while len(open_heap) != 0:
         current_node = heapq.heappop(open_heap)
@@ -86,19 +82,21 @@ def astar(maze):
         for neighbor in neighbors:
             neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
             if open_dictionary.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
+                if neighbor.get_g() <= neighbor_current_cost:
+                    continue
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
-                calculate_f_cost(neighbor, end_node)
+                calculate_f_cost(maze, neighbor, end_node)
                 heapq.heapify(open_heap)
                 neighbor.make_open()
                 # draw_node(maze, neighbor)
             elif closed_dictionary.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
+                if neighbor.get_g() <= neighbor_current_cost:
+                    continue
                 closed_dictionary[neighbor] = False
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
-                calculate_f_cost(neighbor, end_node)
+                calculate_f_cost(maze, neighbor, end_node)
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
@@ -106,7 +104,7 @@ def astar(maze):
             else:
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
-                calculate_f_cost(neighbor, end_node)
+                calculate_f_cost(maze, neighbor, end_node)
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True

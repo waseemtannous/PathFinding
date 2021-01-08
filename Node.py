@@ -14,6 +14,8 @@ class Node:
         self.visited = False
         self.visited_from_end = False
 
+        self.tree_neighbors = []
+
     def is_visited(self):
         return self.visited
 
