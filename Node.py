@@ -11,6 +11,14 @@ class Node:
         self.g = 0
         self.h = 0
         self.f = 0
+        self.visited = False
+        self.visited_from_end = False
+
+    def is_visited(self):
+        return self.visited
+
+    def is_visited_from_end(self):
+        return self.visited_from_end
 
     def get_x(self):
         return self.x

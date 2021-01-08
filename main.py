@@ -5,6 +5,7 @@ from AlgorithmType import *
 from Colors import *
 from Maze import Maze
 from Node import Node
+import threading
 
 root = Tk()  # main window
 root.title("Path Finding")
@@ -13,15 +14,14 @@ root.geometry("300x300")  # width X height
 root.resizable(False, False)
 
 
-
 def import_file():  # a function to read a text file and analyze it
     global maze
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -60,7 +60,6 @@ def import_file():  # a function to read a text file and analyze it
                 average += num
                 if num < minimum:
                     minimum = num
-
 
     average /= (count)
 
@@ -101,6 +100,7 @@ def make_grid(maze):
 
     maze.set_grid(grid)
 
+
 def set_neighbors(maze):
     grid = maze.get_grid()
     for row in grid:
@@ -109,6 +109,9 @@ def set_neighbors(maze):
 
 
 def start_maze():
+    # run_thread = threading.Thread(target=maze.run)
+    # run_thread.start()
+    # run_thread.join()
     maze.run()
 
 
