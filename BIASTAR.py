@@ -75,13 +75,14 @@ def biAstar(maze):
     came_from_start = {}
     came_from_end = {}
 
-    while len(open_heap_start) != 0 and len(open_heap_end):
+    while len(open_heap_start) != 0 and len(open_heap_end) and maze.running:
         current_node = heapq.heappop(open_heap_start)
         current_node.make_closed()
         open_dictionary_start[current_node] = False
         closed_dictionary_start[current_node] = True
 #         # draw_node(maze, current_node)
         if closed_dictionary_end.get(current_node, False):
+            maze.found = True
             time_end = time.time()
             current_node.make_grey()
             # draw_node(maze, current_node)
@@ -99,11 +100,12 @@ def biAstar(maze):
         closed_dictionary_end[current_node2] = True
         # draw_node(maze, current_node2)
         if closed_dictionary_start.get(current_node2, False):
+            maze.found = True
+            time_end = time.time()
             cost = current_node2.get_g()
             current_node2.make_grey()
             # draw_node(maze, current_node2)
             recreate_bidirectional_path(maze, current_node2, came_from_start, came_from_end)
-            time_end = time.time()
             maze.print(time_end - time_start)
             return True
         maze.update_expanded_nodes()

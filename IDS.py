@@ -43,6 +43,11 @@ def draw_node(maze, node):
 
 # depth limited search
 def dls(start, end, max_depth, maze, visited, steps):
+    if not maze.running:
+        return False
+    if start.get_parent() is not None:  # tree
+        start.get_parent().tree_neighbors.append(start)
+
     if start == end:
         return True
 
@@ -76,6 +81,8 @@ def dls(start, end, max_depth, maze, visited, steps):
         #     maze.get_square_size()))
         # draw_grid(maze=maze)
         # pygame.display.update()
+
+        node.set_parent(start)
         visited[node] = steps
         if dls(node, end, max_depth - 1, maze, visited, steps + 1):
             node.make_path()
@@ -95,6 +102,8 @@ def ids(maze):
     max_depth = 100  # todo change this
     time_start = time.time()
     for depth in range(max_depth):
+        if not maze.running:
+            return False
         visited = {start: 0}
         if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited, steps=0):
             time_end = time.time()

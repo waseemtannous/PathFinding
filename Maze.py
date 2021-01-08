@@ -18,9 +18,12 @@ class Maze:
         self.matrix = matrix
         self.PATH = []
         self.number_of_expanded_nodes = 0
+        self.found = False
+        self.running = True
 
         self.solution_depth = 0
         self.avg_hval = []
+        self.depth_array = []
 
     def run(self):
         if self.algotype == AlgorithmType.ASTAR:
@@ -53,6 +56,27 @@ class Maze:
         if (self.algotype is AlgorithmType.ASTAR) or (self.algotype is AlgorithmType.IDASTAR) or (self.algotype is AlgorithmType.BIASTAR):
             avg_hval = sum / len(self.avg_hval)
             print("avg H value = ", avg_hval)
+        self.tree_shit()
+
+
+
+    def tree_shit(self):
+        root = self.get_grid()[self.start[0]][self.start[1]]
+        dls(self, root, 0)
+
+        minimum = float('inf')
+        maximum = (-1) * float('inf')
+        sum = 0
+
+        for num in self.depth_array:
+            sum += num
+            maximum = max(num, maximum)
+            minimum = min(num, minimum)
+        average = sum / len(self.depth_array)
+
+        print("min tree depth = ", minimum)
+        print("max tree depth = ", maximum)
+        print("avg tree depth = ", average)
 
 
     def print_path(self):
@@ -100,3 +124,13 @@ class Maze:
 
     def get_grid(self):
         return self.grid
+
+
+def dls(maze, root, depth):
+    if len(root.tree_neighbors) == 0:
+        maze.depth_array.append(depth)
+        return
+
+    neighbors = root.tree_neighbors
+    for node in neighbors:
+        dls(maze, node, depth + 1)

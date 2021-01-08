@@ -61,13 +61,18 @@ def astar(maze):
     heapq.heappush(open_heap, start_node)
     open_dictionary[start_node] = True
 
-    while len(open_heap) != 0:
+    while len(open_heap) != 0 and maze.running:
         current_node = heapq.heappop(open_heap)
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
         # draw_node(maze, current_node)
+
+        if current_node.get_parent() is not None:   # tree
+            current_node.get_parent().tree_neighbors.append(current_node)
+
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
+            maze.found = True
             time_end = time.time()
             while current_node.get_parent() is not None:
                 maze.get_path().append(current_node)

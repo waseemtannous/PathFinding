@@ -49,12 +49,12 @@ def idAstar(maze):
     start_node = maze.get_grid()[x1][y1]
     end_node = maze.get_grid()[x2][y2]
 
-    calculate_f_cost(start_node, end_node)
+    calculate_f_cost(maze, start_node, end_node)
     threshold = start_node.get_f()
 
     time_start = time.time()
 
-    while threshold < float('inf'):
+    while threshold < float('inf') and maze.running:
         visited = {}
         visited[start_node] = 0
         temp = idastar_helper(maze, start_node, end_node, threshold, visited)
@@ -95,6 +95,8 @@ def idAstar(maze):
 
 
 def idastar_helper(maze, node, end_node, threshold, visited):
+    if not maze.running:
+        return False
     node.make_closed()
     maze.update_expanded_nodes()
     # draw_node(maze, node)
@@ -110,7 +112,7 @@ def idastar_helper(maze, node, end_node, threshold, visited):
                 continue
         visited[neighbor] = current_cost
         neighbor.set_g(current_cost)
-        calculate_f_cost(neighbor, end_node)
+        calculate_f_cost(maze, neighbor, end_node)
         neighbor.set_parent(node)
         neighbor.make_open()
         # draw_node(maze, neighbor)

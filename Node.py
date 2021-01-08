@@ -1,5 +1,6 @@
 from Colors import *
 
+
 class Node:
     def __init__(self, x, y, color, cost):
         self.parent = None
@@ -100,28 +101,32 @@ class Node:
     def set_neighbors(self, maze):
         grid = maze.get_grid()
         self.neighbors = []
-        if self.get_x() != 0 and not grid[self.get_x() - 1][self.get_y()].is_barrier():    #up
+        if self.get_x() != 0 and not grid[self.get_x() - 1][self.get_y()].is_barrier():  # up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y()])
 
-        if self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][self.get_y()].is_barrier():   #down
+        if self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][self.get_y()].is_barrier():  # down
             self.neighbors.append(grid[self.get_x() + 1][self.get_y()])
 
-        if self.get_y() != 0 and not grid[self.get_x()][self.get_y() - 1].is_barrier():    #left
+        if self.get_y() != 0 and not grid[self.get_x()][self.get_y() - 1].is_barrier():  # left
             self.neighbors.append(grid[self.get_x()][self.get_y() - 1])
 
-        if self.get_y() < maze.get_size() - 1 and not grid[self.get_x()][self.get_y() + 1].is_barrier():    #right
+        if self.get_y() < maze.get_size() - 1 and not grid[self.get_x()][self.get_y() + 1].is_barrier():  # right
             self.neighbors.append(grid[self.get_x()][self.get_y() + 1])
 
-        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() - 1][self.get_y() + 1].is_barrier():    #right up
+        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() - 1][
+            self.get_y() + 1].is_barrier():  # right up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y() + 1])
 
-        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() + 1][self.get_y() + 1].is_barrier():    #right down
+        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() + 1][
+            self.get_y() + 1].is_barrier():  # right down
             self.neighbors.append(grid[self.get_x() + 1][self.get_y() + 1])
 
-        if self.get_y() != 0 and self.get_x() != 0 and not grid[self.get_x() - 1][self.get_y() - 1].is_barrier():    #left up
+        if self.get_y() != 0 and self.get_x() != 0 and not grid[self.get_x() - 1][
+            self.get_y() - 1].is_barrier():  # left up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y() - 1])
 
-        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][self.get_y() - 1].is_barrier():    #left down
+        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][
+            self.get_y() - 1].is_barrier():  # left down
             self.neighbors.append(grid[self.get_x() + 1][self.get_y() - 1])
 
         # self.neighbors.sort(key=get_cost)
@@ -138,13 +143,14 @@ class Node:
 
     def make_yellow(self):
         self.color = YELLOW
+
     def make_blue(self):
         self.color = BLUE
 
     def make_grey(self):
         self.color = GREY
 
-    def direction(self, other): # self = parent, other = neighbor
+    def direction(self, other):  # self = parent, other = neighbor
         dx = other.get_x() - self.get_x()
         dy = other.get_y() - self.get_y()
 
@@ -164,6 +170,7 @@ class Node:
             return "L"
         if dx == -1 and dy == -1:
             return "LU"
+
 
 def get_cost(node):
     return node.get_cost()
