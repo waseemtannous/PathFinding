@@ -20,28 +20,32 @@ class Maze:
         self.number_of_expanded_nodes = 0
         self.found = False
         self.running = True
+        self.time = 0
 
         self.solution_depth = 0
         self.avg_hval = []
         self.depth_array = []
 
     def run(self):
+        result = False
         if self.algotype == AlgorithmType.ASTAR:
-            ASTAR.astar(self)
+            result = ASTAR.astar(self)
         elif self.algotype == AlgorithmType.IDASTAR:
-            IDASTAR.idAstar(self)
+            result = IDASTAR.idAstar(self)
         elif self.algotype == AlgorithmType.UCS:
-            UCS.ucs(self)
+            result = UCS.ucs(self)
         elif self.algotype == AlgorithmType.IDS:
-            IDS.ids(self)
+            result = IDS.ids(self)
         elif self.algotype == AlgorithmType.BIASTAR:
-            BIASTAR.biAstar(self)
+            result = BIASTAR.biAstar(self)
+        if result:
+            self.print()
 
-    def print(self, time):
+    def print(self):
         self.solution_depth = len(self.get_path()) - 1
         self.print_path()
         ebf = pow(self.number_of_expanded_nodes, (1 / self.solution_depth))
-        print("time in sec: ", time)
+        print("time in sec: ", self.time)
         print("N = ", self.number_of_expanded_nodes)
         print("d = ", self.solution_depth)
         print("EBF = ", ebf)
@@ -75,20 +79,28 @@ class Maze:
 
 
     def print_path(self):
+        f = open("S:\\onedrive\\sync\\pythonAI\\output.txt", "w+")
         path = self.get_path()
         node = path.pop()
         cost = 0
         print('path length: ' + str(len(path)))
+        output_text = ''
         while len(path) != 0:
             next_node = path.pop()
             cost += next_node.get_cost()
             if len(path) == 0:
-                print(node.direction(next_node), end='')
+                output_text += node.direction(next_node)
             else:
-                print(node.direction(next_node) + '-', end='')
+                output_text += node.direction(next_node)
+                output_text += '-'
             node = next_node
-        print(' ' + str(cost), end='')
-        print(' ' + str(self.number_of_expanded_nodes))
+        output_text += ' '
+        output_text += str(cost)
+        output_text += ' '
+        output_text += str(self.number_of_expanded_nodes)
+        print(output_text)
+        f.write(output_text)
+        f.close()
 
     def update_expanded_nodes(self):
         self.number_of_expanded_nodes += 1

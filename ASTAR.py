@@ -30,12 +30,13 @@ def astar(maze):
 
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
             maze.found = True
+            maze.running = False
             time_end = time.time()
             while current_node.get_parent() is not None:
                 maze.get_path().append(current_node)
                 current_node = current_node.get_parent()
             maze.get_path().append(start_node)
-            maze.print(time_end - time_start)
+            maze.time = time_end - time_start
             return True
         maze.update_expanded_nodes()
         neighbors = current_node.get_neighbors()
@@ -64,4 +65,5 @@ def astar(maze):
                 heapq.heappush(open_heap, neighbor)
                 open_dictionary[neighbor] = True
 
+    maze.running = False
     return False

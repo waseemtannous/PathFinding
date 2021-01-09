@@ -19,16 +19,14 @@ def idAstar(maze):
         visited[start_node] = 0
         temp = idastar_helper(maze, start_node, end_node, threshold, visited)
         if temp < 0:
-            print("found")
+            time_end = time.time()
             while end_node.get_parent() is not None:
                 maze.get_path().append(end_node)
                 end_node = end_node.get_parent()
             maze.get_path().append(start_node)
-            time_end = time.time()
-            maze.print(time_end - time_start)
+            maze.time = time_end - time_start
             return True
         elif temp == float("inf"):
-            print("not found")
             return False
         else:
             threshold = temp

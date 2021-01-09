@@ -2,19 +2,17 @@ from tkinter import *
 from tkinter import filedialog
 
 from AlgorithmType import *
-from Colors import *
 from Maze import Maze
 from Node import Node
 import threading
 import time
-import math
 
 root = Tk()  # main window
 root.title("Path Finding")
 root.configure(background='#2b2b2b')
 root.geometry("300x300")  # width X height
 root.resizable(False, False)
-max_time = 0.000001
+max_time = 100
 
 
 def import_file():  # a function to read a text file and analyze it
@@ -30,6 +28,7 @@ def import_file():  # a function to read a text file and analyze it
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\120a.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -111,18 +110,19 @@ def set_neighbors(maze):
 
 
 def start_maze():
-    # run_thread = threading.Thread(target=timer, args=[maze])
-    # run_thread.start()
-    # run_thread.join()
+    run_thread = threading.Thread(target=timer, args=[maze])
+    run_thread.start()
     maze.run()
-    # exit(0)
+    print('done')
+    exit(0)
 
 
-def timer(maze):
+def timer(maze):    # todo: ida ids not working with timer
     start_time = time.time()
     while True:
+        print('test')
         diff_time = time.time() - start_time
-        if not maze.running:
+        if (not maze.running) and maze.found:
             return
         if diff_time > max_time and maze.running:
             maze.running = False

@@ -5,6 +5,7 @@ import time
 def dls(start, end, max_depth, maze, visited, steps):
     if not maze.running:
         return False
+
     if start.get_parent() is not None:  # tree
         start.get_parent().tree_neighbors.append(start)
 
@@ -37,7 +38,8 @@ def ids(maze):
     start = grid[x1][y1]
     end = grid[x2][y2]
     # depth limit search till max depth
-    max_depth = 100  # todo change this
+    size = maze.size
+    max_depth = size * size
     time_start = time.time()
     for depth in range(max_depth):
         if not maze.running:
@@ -45,9 +47,10 @@ def ids(maze):
         visited = {start: 0}
         if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited, steps=0):
             time_end = time.time()
+            maze.found = True
+            maze.running = False
             maze.get_path().append(start)
-            maze.print(time_end - time_start)
+            maze.time = time_end - time_start
             return True
-    time_end = time.time()
-    print("time in sec: ", time_end - time_start)
+    maze.running = False
     return False
