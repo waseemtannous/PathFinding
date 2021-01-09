@@ -27,19 +27,14 @@ class Maze:
 
     def run(self):
         if self.algotype == AlgorithmType.ASTAR:
-            ASTAR.draw(self)
             ASTAR.astar(self)
         elif self.algotype == AlgorithmType.IDASTAR:
-            IDASTAR.draw(self)
             IDASTAR.idAstar(self)
         elif self.algotype == AlgorithmType.UCS:
-            UCS.draw(self)
             UCS.ucs(self)
         elif self.algotype == AlgorithmType.IDS:
-            IDS.draw(self)
             IDS.ids(self)
         elif self.algotype == AlgorithmType.BIASTAR:
-            BIASTAR.draw(self)
             BIASTAR.biAstar(self)
 
     def print(self, time):

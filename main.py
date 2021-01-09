@@ -22,14 +22,14 @@ def import_file():  # a function to read a text file and analyze it
     global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -93,26 +93,11 @@ def import_file():  # a function to read a text file and analyze it
 
 def make_grid(maze):
     grid = []
-    maze.set_square_size(800 // maze.get_size())
     for i in range(maze.get_size()):
         grid.append([])
         for j in range(maze.get_size()):
-            cost = 0
-            x1, y1 = maze.get_start()
-            x2, y2 = maze.get_end()
-            if i == x1 and j == y1:
-                color = ORANGE
-                cost = maze.get_matrix()[i][j]
-            elif i == x2 and j == y2:
-                color = TURQUOISE
-                cost = maze.get_matrix()[i][j]
-            elif maze.get_matrix()[i][j] == -1:
-                color = BLACK
-            else:
-                color = WHITE
-                cost = maze.get_matrix()[i][j]
-
-            node = Node(x=i, y=j, color=color, cost=cost)
+            cost = maze.get_matrix()[i][j]
+            node = Node(x=i, y=j, cost=cost)
             grid[i].append(node)
 
     maze.set_grid(grid)

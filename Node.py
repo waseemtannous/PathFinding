@@ -2,11 +2,11 @@ from Colors import *
 
 
 class Node:
-    def __init__(self, x, y, color, cost):
+    def __init__(self, x, y, cost):
         self.parent = None
         self.x = x
         self.y = y
-        self.color = color
+        # self.color = color
         self.cost = cost
         self.neighbors = []
         self.g = 0
@@ -34,42 +34,6 @@ class Node:
 
     def get_position(self):
         return self.x, self.y
-
-    def is_closed(self):
-        return self.color == RED
-
-    def is_open(self):
-        return self.color == GREEN
-
-    def is_barrier(self):
-        return self.color == BLACK
-
-    def is_start(self):
-        return self.color == ORANGE
-
-    def is_end(self):
-        return self.color == TURQUOISE
-
-    def reset(self):
-        self.color = WHITE
-
-    def make_start(self):
-        self.color = ORANGE
-
-    def make_closed(self):
-        self.color = RED
-
-    def make_open(self):
-        self.color = GREEN
-
-    def make_barrier(self):
-        self.color = BLACK
-
-    def make_end(self):
-        self.color = TURQUOISE
-
-    def make_path(self):
-        self.color = PURPLE
 
     def get_neighbors(self):
         return self.neighbors
@@ -101,32 +65,28 @@ class Node:
     def set_neighbors(self, maze):
         grid = maze.get_grid()
         self.neighbors = []
-        if self.get_x() != 0 and not grid[self.get_x() - 1][self.get_y()].is_barrier():  # up
+        if self.get_x() != 0 and not (grid[self.get_x() - 1][self.get_y()].get_cost() == -1):  # up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y()])
 
-        if self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][self.get_y()].is_barrier():  # down
+        if self.get_x() < maze.get_size() - 1 and not (grid[self.get_x() + 1][self.get_y()].get_cost() == -1):  # down
             self.neighbors.append(grid[self.get_x() + 1][self.get_y()])
 
-        if self.get_y() != 0 and not grid[self.get_x()][self.get_y() - 1].is_barrier():  # left
+        if self.get_y() != 0 and not (grid[self.get_x()][self.get_y() - 1].get_cost() == -1):  # left
             self.neighbors.append(grid[self.get_x()][self.get_y() - 1])
 
-        if self.get_y() < maze.get_size() - 1 and not grid[self.get_x()][self.get_y() + 1].is_barrier():  # right
+        if self.get_y() < maze.get_size() - 1 and not (grid[self.get_x()][self.get_y() + 1].get_cost() == -1):  # right
             self.neighbors.append(grid[self.get_x()][self.get_y() + 1])
 
-        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() - 1][
-            self.get_y() + 1].is_barrier():  # right up
+        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not (grid[self.get_x() - 1][self.get_y() + 1].get_cost() == -1):  # right up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y() + 1])
 
-        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() + 1][
-            self.get_y() + 1].is_barrier():  # right down
+        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not (grid[self.get_x() + 1][self.get_y() + 1].get_cost() == -1):  # right down
             self.neighbors.append(grid[self.get_x() + 1][self.get_y() + 1])
 
-        if self.get_y() != 0 and self.get_x() != 0 and not grid[self.get_x() - 1][
-            self.get_y() - 1].is_barrier():  # left up
+        if self.get_y() != 0 and self.get_x() != 0 and not (grid[self.get_x() - 1][self.get_y() - 1].get_cost() == -1):  # left up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y() - 1])
 
-        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][
-            self.get_y() - 1].is_barrier():  # left down
+        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not (grid[self.get_x() + 1][self.get_y() - 1].get_cost() == -1):  # left down
             self.neighbors.append(grid[self.get_x() + 1][self.get_y() - 1])
 
         # self.neighbors.sort(key=get_cost)
@@ -140,15 +100,6 @@ class Node:
         if self.f == other.f:
             return self.h > other.h
         return self.f > other.f
-
-    def make_yellow(self):
-        self.color = YELLOW
-
-    def make_blue(self):
-        self.color = BLUE
-
-    def make_grey(self):
-        self.color = GREY
 
     def direction(self, other):  # self = parent, other = neighbor
         dx = other.get_x() - self.get_x()
