@@ -77,7 +77,7 @@ def astar(maze):
             while current_node.get_parent() is not None:
                 maze.get_path().append(current_node)
                 current_node.make_path()
-                draw_node(maze, current_node)
+                # draw_node(maze, current_node)
                 current_node = current_node.get_parent()
             maze.get_path().append(start_node)
             maze.print(time_end - time_start)

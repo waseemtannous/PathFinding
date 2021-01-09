@@ -7,8 +7,7 @@ from Maze import Maze
 from Node import Node
 import threading
 import time
-import sys
-import os
+import math
 
 root = Tk()  # main window
 root.title("Path Finding")
@@ -20,12 +19,17 @@ max_time = 0.000001
 
 def import_file():  # a function to read a text file and analyze it
     global maze
+    global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -40,8 +44,12 @@ def import_file():  # a function to read a text file and analyze it
     else:
         algo_type = AlgorithmType.IDS
 
+    algo_type = AlgorithmType.ASTAR
+
     second_line = f.readline()
     size = int(second_line)
+
+    # max_time = math.sqrt(size)
 
     third_line = f.readline()
     arr = [int(num) for num in third_line.split(',')]
@@ -52,6 +60,11 @@ def import_file():  # a function to read a text file and analyze it
     end = (arr[0], arr[1])
 
     matrix = [[int(num) for num in line.split(',')] for line in f if line.strip(' ') != ""]
+
+    length = 0
+    for row in matrix:
+        for _ in row:
+            length += 1
 
     average = 0
     minimum = matrix[0][0]
@@ -65,7 +78,7 @@ def import_file():  # a function to read a text file and analyze it
                 if num < minimum:
                     minimum = num
 
-    average /= (count)
+    average /= count
 
     print("average ", average)
     print("minimum ", minimum)
@@ -76,7 +89,6 @@ def import_file():  # a function to read a text file and analyze it
     make_grid(maze)
     set_neighbors(maze)
     start_button['state'] = NORMAL
-
 
 
 def make_grid(maze):
@@ -113,21 +125,31 @@ def set_neighbors(maze):
             node.set_neighbors(maze)
 
 
-
 def start_maze():
-    run_thread = threading.Thread(target=timer, args=[maze])
-    run_thread.start()
-    maze.run()
-    exit(0)
+    # run_thread = threading.Thread(target=timer, args=[maze])
+    # run_thread.start()
     # run_thread.join()
+    maze.run()
+    # exit(0)
 
 
 def timer(maze):
-    time.sleep(max_time)
-    if not maze.found:
-        maze.running = False
-        print('NOT FOUND')
-        exit(0)
+    start_time = time.time()
+    while True:
+        diff_time = time.time() - start_time
+        if not maze.running:
+            return
+        if diff_time > max_time and maze.running:
+            maze.running = False
+            print('not found')
+            return
+
+    # time.sleep(max_time)
+    # if not maze.found:
+    #     maze.running = False
+    #     print('NOT FOUND')
+    #     exit(0)
+
 
 import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f41', fg='#a9b7c6', bd=0,
                        font=("JetBrains Mono", 18))

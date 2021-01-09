@@ -15,13 +15,14 @@ def heuristic1(maze, node, end):
     d2 = math.sqrt(2)
     d2 = 1
 
-    retval = (dx + dy) * 1
+    retval = (dx + dy) * 500
 
     # return (d1 * (dx + dy)) + ((d2 - (2 * d1)) * min(dx, dy))
 
     maze.avg_hval.append(retval)
 
     return retval
+    # return 0
     # if dx > dy:
     #     return (14 * dy) + (10 * (dx - dy))
     # else:

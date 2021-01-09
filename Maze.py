@@ -45,22 +45,22 @@ class Maze:
     def print(self, time):
         self.solution_depth = len(self.get_path()) - 1
         self.print_path()
+        ebf = pow(self.number_of_expanded_nodes, (1 / self.solution_depth))
         print("time in sec: ", time)
         print("N = ", self.number_of_expanded_nodes)
         print("d = ", self.solution_depth)
-        print("EBF = ", pow(self.number_of_expanded_nodes, (1 / self.solution_depth)))
-        avg_hval = 0
+        print("EBF = ", ebf)
         sum = 0
         for num in self.avg_hval:
             sum += num
         if (self.algotype is AlgorithmType.ASTAR) or (self.algotype is AlgorithmType.IDASTAR) or (self.algotype is AlgorithmType.BIASTAR):
             avg_hval = sum / len(self.avg_hval)
             print("avg H value = ", avg_hval)
-        self.tree_shit()
+        self.tree_stats()
 
 
 
-    def tree_shit(self):
+    def tree_stats(self):
         root = self.get_grid()[self.start[0]][self.start[1]]
         dls(self, root, 0)
 
@@ -83,17 +83,17 @@ class Maze:
         path = self.get_path()
         node = path.pop()
         cost = 0
-        print(len(path))
+        print('path length: ' + str(len(path)))
         while len(path) != 0:
             next_node = path.pop()
             cost += next_node.get_cost()
             if len(path) == 0:
-                print(node.direction(next_node), end="")
+                print(node.direction(next_node), end='')
             else:
-                print(node.direction(next_node), "-", end="")
+                print(node.direction(next_node) + '-', end='')
             node = next_node
-        print()
-        print("cost = ", cost)
+        print(' ' + str(cost), end='')
+        print(' ' + str(self.number_of_expanded_nodes))
 
     def update_expanded_nodes(self):
         self.number_of_expanded_nodes += 1

@@ -77,15 +77,18 @@ def biAstar(maze):
 
     while len(open_heap_start) != 0 and len(open_heap_end) and maze.running:
         current_node = heapq.heappop(open_heap_start)
+        if current_node.get_x() == 19 and current_node.get_y() == 16:
+            print('here')
         current_node.make_closed()
         open_dictionary_start[current_node] = False
         closed_dictionary_start[current_node] = True
-#         # draw_node(maze, current_node)
+        # draw_node(maze, current_node)
         if closed_dictionary_end.get(current_node, False):
+            print('found from end')
             maze.found = True
             time_end = time.time()
             current_node.make_grey()
-            # draw_node(maze, current_node)
+            draw_node(maze, current_node)
             recreate_bidirectional_path(maze, current_node, came_from_start, came_from_end)
             maze.print(time_end - time_start)
             return True
@@ -94,17 +97,20 @@ def biAstar(maze):
 
         #   second one #######################
         current_node2 = heapq.heappop(open_heap_end)
+        if current_node2.get_x() == 19 and current_node2.get_y() == 16:
+            print('here')
         current_node2.make_closed()
         current_node2.make_blue()
         open_dictionary_end[current_node2] = False
         closed_dictionary_end[current_node2] = True
         # draw_node(maze, current_node2)
         if closed_dictionary_start.get(current_node2, False):
+            print('found from start')
             maze.found = True
             time_end = time.time()
             cost = current_node2.get_g()
             current_node2.make_grey()
-            # draw_node(maze, current_node2)
+            draw_node(maze, current_node2)
             recreate_bidirectional_path(maze, current_node2, came_from_start, came_from_end)
             maze.print(time_end - time_start)
             return True
@@ -119,17 +125,23 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
     for neighbor in neighbors:
         neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
         if open_dictionary.get(neighbor, False):
-            if neighbor.get_g() <= neighbor_current_cost: continue
+            if neighbor.get_g() <= neighbor_current_cost:
+                continue
             neighbor.set_g(neighbor_current_cost)
+            if came_from[current_node] == neighbor:
+                continue
             came_from[neighbor] = current_node
             calculate_f_cost(maze, neighbor, end_node)
             heapq.heapify(open_heap)
             neighbor.make_open()
             # draw_node(maze, neighbor)
         elif closed_dictionary.get(neighbor, False):
-            if neighbor.get_g() <= neighbor_current_cost: continue
+            if neighbor.get_g() <= neighbor_current_cost:
+                continue
             closed_dictionary[neighbor] = False
             neighbor.set_g(neighbor_current_cost)
+            if came_from[current_node] == neighbor:
+                continue
             came_from[neighbor] = current_node
             calculate_f_cost(maze, neighbor, end_node)
             heapq.heappush(open_heap, neighbor)
@@ -143,13 +155,14 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             heapq.heappush(open_heap, neighbor)
             neighbor.make_open()
             open_dictionary[neighbor] = True
+            closed_dictionary[neighbor] = False
             # draw_node(maze, neighbor)
 
 
 def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
     maze.get_path().append(node)
-    node.make_path()
-    # draw_node(maze, node)
+    # node.make_path()
+    draw_node(maze, node)
 
     node_x = node.get_x()
     node_y = node.get_y()
@@ -159,17 +172,19 @@ def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
         node.make_path()
         maze.get_path().append(node)
         node.make_path()
-        # draw_node(maze, node)
+        draw_node(maze, node)
 
     maze.get_path().reverse()
     node = maze.get_grid()[node_x][node_y]
+    print("saji")
 
     while node in came_from_start:
         node = came_from_start[node]
+        print(node.get_x(), ", ", node.get_y())
         node.make_path()
         maze.get_path().append(node)
         node.make_path()
-        # draw_node(maze, node)
+        draw_node(maze, node)
     node = maze.get_grid()[node_x][node_y]
     node.make_grey()
-    # draw_node(maze, node)
+    draw_node(maze, node)
