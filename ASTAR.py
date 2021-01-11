@@ -61,15 +61,21 @@ def astar(maze):
     heapq.heappush(open_heap, start_node)
     open_dictionary[start_node] = True
 
+    previous_node = None
+
     while len(open_heap) != 0 and maze.running:
         current_node = heapq.heappop(open_heap)
+        maze.update_expanded_nodes()
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
         draw_node(maze, current_node)
 
-        if current_node.get_parent() is not None:   # tree
-            current_node.get_parent().tree_neighbors.append(current_node)
+        if previous_node:
+            if not previous_node.is_neighbor(current_node):
+                maze.update_cuttoff(previous_node.depth)
+
+        previous_node = current_node
 
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
             maze.found = True
@@ -82,7 +88,6 @@ def astar(maze):
             maze.get_path().append(start_node)
             maze.print(time_end - time_start)
             return True
-        maze.update_expanded_nodes()
         neighbors = current_node.get_neighbors()
         for neighbor in neighbors:
             neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
@@ -90,6 +95,7 @@ def astar(maze):
                 if neighbor.get_g() <= neighbor_current_cost:
                     continue
                 neighbor.set_g(neighbor_current_cost)
+                neighbor.set_depth(current_node.get_depth())
                 neighbor.set_parent(current_node)
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heapify(open_heap)
@@ -100,6 +106,7 @@ def astar(maze):
                     continue
                 closed_dictionary[neighbor] = False
                 neighbor.set_g(neighbor_current_cost)
+                neighbor.set_depth(current_node.get_depth())
                 neighbor.set_parent(current_node)
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heappush(open_heap, neighbor)
@@ -108,6 +115,7 @@ def astar(maze):
                 draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
+                neighbor.set_depth(current_node.get_depth())
                 neighbor.set_parent(current_node)
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heappush(open_heap, neighbor)

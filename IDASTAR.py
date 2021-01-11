@@ -97,6 +97,7 @@ def idAstar(maze):
 def idastar_helper(maze, node, end_node, threshold, visited):
     if not maze.running:
         return False
+
     node.make_closed()
     maze.update_expanded_nodes()
     draw_node(maze, node)
@@ -112,6 +113,7 @@ def idastar_helper(maze, node, end_node, threshold, visited):
                 continue
         visited[neighbor] = current_cost
         neighbor.set_g(current_cost)
+        neighbor.set_depth(node.get_depth())
         calculate_f_cost(maze, neighbor, end_node)
         neighbor.set_parent(node)
         neighbor.make_open()
@@ -119,6 +121,8 @@ def idastar_helper(maze, node, end_node, threshold, visited):
         f = neighbor.get_f()
         if f <= threshold:
             fn = min(fn, idastar_helper(maze, neighbor, end_node, threshold, visited))
+            maze.update_cuttoff(node.get_depth())
         else:
             fn = min(fn, f)
+            maze.update_cuttoff(node.get_depth())
     return fn

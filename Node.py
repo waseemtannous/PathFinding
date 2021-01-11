@@ -12,16 +12,13 @@ class Node:
         self.g = 0
         self.h = 0
         self.f = 0
-        self.visited = False
-        self.visited_from_end = False
+        self.depth = 0
 
-        self.tree_neighbors = []
+    def get_depth(self):
+        return self.depth
 
-    def is_visited(self):
-        return self.visited
-
-    def is_visited_from_end(self):
-        return self.visited_from_end
+    def set_depth(self, depth):
+        self.depth = depth + 1
 
     def get_x(self):
         return self.x
@@ -98,8 +95,13 @@ class Node:
     def set_parent(self, parent):
         self.parent = parent
 
-    def set_neighbors(self, maze):
-        grid = maze.get_grid()
+    def is_neighbor(self, other):
+        for neighbor in self.neighbors:
+           if neighbor.get_x() == other.get_x() and neighbor.get_y() == other.get_y():
+               return True
+        return False
+
+    def set_neighbors(self, maze, grid):
         self.neighbors = []
         if self.get_x() != 0 and not grid[self.get_x() - 1][self.get_y()].is_barrier():  # up
             self.neighbors.append(grid[self.get_x() - 1][self.get_y()])

@@ -42,23 +42,23 @@ def draw_node(maze, node):
 
 
 # depth limited search
-def dls(start, end, max_depth, maze, visited, steps):
+def dls(current_node, end, max_depth, maze, visited):
     if not maze.running:
         return False
-    if start.get_parent() is not None:  # tree
-        start.get_parent().tree_neighbors.append(start)
 
-    if start == end:
+    if current_node == end:
         return True
 
     # If reached the maximum depth, stop recursing.
     if max_depth <= 0:
+        maze.update_cuttoff(current_node.depth)
         return False
 
     # change node color
-    for node in start.get_neighbors():
-        if node in visited:
-            if visited.get(node) <= steps:
+    for node in current_node.get_neighbors():
+        current_cost = current_node.get_g() + node.get_cost()
+        if visited.get(node, False):
+            if node.get_g() <= current_cost:
                 continue
         node.make_open()
         pygame.draw.rect(WINDOW, node.color, (
@@ -69,11 +69,14 @@ def dls(start, end, max_depth, maze, visited, steps):
 
     maze.update_expanded_nodes()
     # Recur for all the vertices adjacent to this vertex
-    neighbors = start.get_neighbors()
+    neighbors = current_node.get_neighbors()
     for node in neighbors:
-        if node in visited:
-            if visited.get(node) <= steps:
+        current_cost = current_node.get_g() + node.get_cost()
+        if visited.get(node, False):
+            if node.get_g() <= current_cost:
                 continue
+
+        node.set_depth(current_node.get_depth())
         if (node.get_x(), node.get_y()) != maze.get_start():
             node.make_closed()
         pygame.draw.rect(WINDOW, node.color, (
@@ -82,14 +85,17 @@ def dls(start, end, max_depth, maze, visited, steps):
         draw_grid(maze=maze)
         pygame.display.update()
 
-        node.set_parent(start)
-        visited[node] = steps
-        if dls(node, end, max_depth - 1, maze, visited, steps + 1):
+        node.set_parent(current_node)
+        visited[node] = True
+        node.set_g(current_cost)
+        if dls(node, end, max_depth - 1, maze, visited):
             node.make_path()
             draw_node(maze, node)
             maze.get_path().append(node)
             return True
+    maze.update_cuttoff(current_node.depth)
     return False
+
 
 
 def ids(maze):
@@ -104,8 +110,8 @@ def ids(maze):
     for depth in range(max_depth):
         if not maze.running:
             return False
-        visited = {start: 0}
-        if dls(start=start, end=end, max_depth=depth, maze=maze, visited=visited, steps=0):
+        visited = {start: True}
+        if dls(current_node=start, end=end, max_depth=depth, maze=maze, visited=visited):
             time_end = time.time()
             maze.get_path().append(start)
             maze.print(time_end - time_start)

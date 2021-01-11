@@ -63,12 +63,21 @@ def ucs(maze):
     heapq.heappush(open_heap, start_node)
     open_dictionary[start_node] = True
 
+    previous_node = None
+
     while len(open_heap) != 0 and maze.running:
         current_node = heapq.heappop(open_heap)
+        maze.update_expanded_nodes()
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
         draw_node(maze, current_node)
+
+        if previous_node:
+            if not previous_node.is_neighbor(current_node):
+                maze.update_cuttoff(previous_node.depth)
+
+        previous_node = current_node
 
         if current_node.get_parent() is not None:   # tree
             current_node.get_parent().tree_neighbors.append(current_node)
@@ -84,25 +93,27 @@ def ucs(maze):
             maze.get_path().append(start_node)
             maze.print(time_end - time_start)
             return True
-        maze.update_expanded_nodes()
+
         neighbors = current_node.get_neighbors()
         for neighbor in neighbors:
             neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
             if open_dictionary.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
-                while current_node.get_parent() is not None:
-                    maze.get_path().append(current_node)
-                    current_node.make_path()
-                    draw_node(maze, current_node)
-                    current_node = current_node.get_parent()
-                maze.get_path().append(start_node)
-                time_end = time.time()
-                maze.print(time_end - time_start)
-                return True
+                if neighbor.get_g() <= neighbor_current_cost:
+                    continue
+                neighbor.set_g(neighbor_current_cost)
+                neighbor.set_depth(current_node.get_depth())
+                neighbor.set_parent(current_node)
+                neighbor.set_h(0)
+                neighbor.calculate_f()
+                heapq.heapify(open_heap)
+                neighbor.make_open()
+                draw_node(maze, neighbor)
             elif closed_dictionary.get(neighbor, False):
-                if neighbor.get_g() <= neighbor_current_cost: continue
+                if neighbor.get_g() <= neighbor_current_cost:
+                    continue
                 closed_dictionary[neighbor] = False
                 neighbor.set_g(neighbor_current_cost)
+                neighbor.set_depth(current_node.get_depth())
                 neighbor.set_parent(current_node)
                 neighbor.set_h(0)
                 neighbor.calculate_f()
@@ -112,6 +123,7 @@ def ucs(maze):
                 draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
+                neighbor.set_depth(current_node.get_depth())
                 neighbor.set_parent(current_node)
                 neighbor.set_h(0)
                 neighbor.calculate_f()

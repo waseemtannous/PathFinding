@@ -10,6 +10,7 @@ import IDASTAR
 class Maze:
     def __init__(self, algotype, size, start, end, matrix):
         self.grid = None
+        self.second_grid = None
         self.square_size = None
         self.algotype = algotype
         self.size = size
@@ -20,6 +21,11 @@ class Maze:
         self.number_of_expanded_nodes = 0
         self.found = False
         self.running = True
+        self.min_cuttoff = float('inf')
+        self.max_cuttoff = (-1) * float('inf')
+        self.sum_cuttoff = 0
+        self.number_cuttoff = 0
+
 
         self.solution_depth = 0
         self.avg_hval = []
@@ -56,7 +62,7 @@ class Maze:
         if (self.algotype is AlgorithmType.ASTAR) or (self.algotype is AlgorithmType.IDASTAR) or (self.algotype is AlgorithmType.BIASTAR):
             avg_hval = sum / len(self.avg_hval)
             print("avg H value = ", avg_hval)
-        self.tree_stats()
+        self.print_cuttoff()
 
 
 
@@ -98,6 +104,17 @@ class Maze:
     def update_expanded_nodes(self):
         self.number_of_expanded_nodes += 1
 
+    def update_cuttoff(self, depth):
+        self.min_cuttoff = min(self.min_cuttoff, depth)
+        self.max_cuttoff = max(self.max_cuttoff, depth)
+        self.sum_cuttoff += depth
+        self.number_cuttoff += 1
+
+    def print_cuttoff(self):
+        print("min tree depth = ", self.min_cuttoff)
+        print("max tree depth = ", self.max_cuttoff)
+        print("avg tree depth = ", (self.sum_cuttoff / self.number_cuttoff))
+
     def get_path(self):
         return self.PATH
 
@@ -116,14 +133,22 @@ class Maze:
     def set_grid(self, grid):
         self.grid = grid
 
+    def get_grid(self):
+        return self.grid
+
+    def set_second_grid(self, second_grid):
+        self.second_grid = second_grid
+
+    def get_second_grid(self):
+        return self.second_grid
+
     def set_square_size(self, square_size):
         self.square_size = square_size
 
     def get_square_size(self):
         return self.square_size
 
-    def get_grid(self):
-        return self.grid
+
 
 
 def dls(maze, root, depth):

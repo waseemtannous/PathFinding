@@ -22,9 +22,9 @@ def import_file():  # a function to read a text file and analyze it
     global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
@@ -44,7 +44,7 @@ def import_file():  # a function to read a text file and analyze it
     else:
         algo_type = AlgorithmType.IDS
 
-    algo_type = AlgorithmType.ASTAR
+    algo_type = AlgorithmType.BIASTAR
 
     second_line = f.readline()
     size = int(second_line)
@@ -92,10 +92,10 @@ def import_file():  # a function to read a text file and analyze it
 
 
 def make_grid(maze):
-    grid = []
+    grid1 = []
     maze.set_square_size(800 // maze.get_size())
     for i in range(maze.get_size()):
-        grid.append([])
+        grid1.append([])
         for j in range(maze.get_size()):
             cost = 0
             x1, y1 = maze.get_start()
@@ -113,16 +113,45 @@ def make_grid(maze):
                 cost = maze.get_matrix()[i][j]
 
             node = Node(x=i, y=j, color=color, cost=cost)
-            grid[i].append(node)
+            grid1[i].append(node)
 
-    maze.set_grid(grid)
+    maze.set_grid(grid1)
+
+    if maze.algotype == AlgorithmType.BIASTAR:
+        grid2 = []
+        for i in range(maze.get_size()):
+            grid2.append([])
+            for j in range(maze.get_size()):
+                cost = 0
+                x1, y1 = maze.get_start()
+                x2, y2 = maze.get_end()
+                if i == x1 and j == y1:
+                    color = ORANGE
+                    cost = maze.get_matrix()[i][j]
+                elif i == x2 and j == y2:
+                    color = TURQUOISE
+                    cost = maze.get_matrix()[i][j]
+                elif maze.get_matrix()[i][j] == -1:
+                    color = BLACK
+                else:
+                    color = WHITE
+                    cost = maze.get_matrix()[i][j]
+
+                node = Node(x=i, y=j, color=color, cost=cost)
+                grid2[i].append(node)
+        maze.set_second_grid(grid2)
 
 
 def set_neighbors(maze):
     grid = maze.get_grid()
     for row in grid:
         for node in row:
-            node.set_neighbors(maze)
+            node.set_neighbors(maze, grid)
+    if maze.algotype == AlgorithmType.BIASTAR:
+        grid = maze.get_second_grid()
+        for row in grid:
+            for node in row:
+                node.set_neighbors(maze, grid)
 
 
 def start_maze():
