@@ -82,7 +82,7 @@ def biAstar(maze):
         current_node.make_closed()
         open_dictionary_start[current_node] = False
         closed_dictionary_start[current_node] = True
-        # draw_node(maze, current_node)
+        draw_node(maze, current_node)
         if closed_dictionary_end.get(current_node, False):
             print('found from end')
             maze.found = True
@@ -103,7 +103,7 @@ def biAstar(maze):
         current_node2.make_blue()
         open_dictionary_end[current_node2] = False
         closed_dictionary_end[current_node2] = True
-        # draw_node(maze, current_node2)
+        draw_node(maze, current_node2)
         if closed_dictionary_start.get(current_node2, False):
             print('found from start')
             maze.found = True
@@ -134,7 +134,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             calculate_f_cost(maze, neighbor, end_node)
             heapq.heapify(open_heap)
             neighbor.make_open()
-            # draw_node(maze, neighbor)
+            draw_node(maze, neighbor)
         elif closed_dictionary.get(neighbor, False):
             if neighbor.get_g() <= neighbor_current_cost:
                 continue
@@ -147,7 +147,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             heapq.heappush(open_heap, neighbor)
             neighbor.make_open()
             open_dictionary[neighbor] = True
-            # draw_node(maze, neighbor)
+            draw_node(maze, neighbor)
         else:
             neighbor.set_g(neighbor_current_cost)
             came_from[neighbor] = current_node
@@ -156,7 +156,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             neighbor.make_open()
             open_dictionary[neighbor] = True
             closed_dictionary[neighbor] = False
-            # draw_node(maze, neighbor)
+            draw_node(maze, neighbor)
 
 
 def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):

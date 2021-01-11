@@ -66,7 +66,7 @@ def astar(maze):
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        # draw_node(maze, current_node)
+        draw_node(maze, current_node)
 
         if current_node.get_parent() is not None:   # tree
             current_node.get_parent().tree_neighbors.append(current_node)
@@ -77,7 +77,7 @@ def astar(maze):
             while current_node.get_parent() is not None:
                 maze.get_path().append(current_node)
                 current_node.make_path()
-                # draw_node(maze, current_node)
+                draw_node(maze, current_node)
                 current_node = current_node.get_parent()
             maze.get_path().append(start_node)
             maze.print(time_end - time_start)
@@ -94,7 +94,7 @@ def astar(maze):
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heapify(open_heap)
                 neighbor.make_open()
-                # draw_node(maze, neighbor)
+                draw_node(maze, neighbor)
             elif closed_dictionary.get(neighbor, False):
                 if neighbor.get_g() <= neighbor_current_cost:
                     continue
@@ -105,7 +105,7 @@ def astar(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
+                draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
@@ -113,6 +113,6 @@ def astar(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
+                draw_node(maze, neighbor)
 
     return False

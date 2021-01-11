@@ -56,16 +56,16 @@ def dls(start, end, max_depth, maze, visited, steps):
         return False
 
     # change node color
-    # for node in start.get_neighbors():
-    #     if node in visited:
-    #         if visited.get(node) <= steps:
-    #             continue
-    #     node.make_open()
-    #     pygame.draw.rect(WINDOW, node.color, (
-    #         node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-    #         maze.get_square_size()))
-    #     draw_grid(maze=maze)
-    #     pygame.display.update()
+    for node in start.get_neighbors():
+        if node in visited:
+            if visited.get(node) <= steps:
+                continue
+        node.make_open()
+        pygame.draw.rect(WINDOW, node.color, (
+            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
+            maze.get_square_size()))
+        draw_grid(maze=maze)
+        pygame.display.update()
 
     maze.update_expanded_nodes()
     # Recur for all the vertices adjacent to this vertex
@@ -76,17 +76,17 @@ def dls(start, end, max_depth, maze, visited, steps):
                 continue
         if (node.get_x(), node.get_y()) != maze.get_start():
             node.make_closed()
-        # pygame.draw.rect(WINDOW, node.color, (
-        #     node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-        #     maze.get_square_size()))
-        # draw_grid(maze=maze)
-        # pygame.display.update()
+        pygame.draw.rect(WINDOW, node.color, (
+            node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
+            maze.get_square_size()))
+        draw_grid(maze=maze)
+        pygame.display.update()
 
         node.set_parent(start)
         visited[node] = steps
         if dls(node, end, max_depth - 1, maze, visited, steps + 1):
             node.make_path()
-            # draw_node(maze, node)
+            draw_node(maze, node)
             maze.get_path().append(node)
             return True
     return False
@@ -110,24 +110,24 @@ def ids(maze):
             maze.get_path().append(start)
             maze.print(time_end - time_start)
             return True
-        # for row in grid:
-        #     for node in row:
-        #         if node.get_cost() == 0:
-        #             node.make_barrier()
-        #         elif node == start:
-        #             node.make_start()
-        #         elif node == end:
-        #             node.make_end()
-        #         else:
-        #             node.reset()
-        #         pygame.draw.rect(WINDOW, node.color, (
-        #             node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-        #             maze.get_square_size(),
-        #             maze.get_square_size()))
-        # start.make_start()
-        # end.make_end()
-        # draw_grid(maze=maze)
-        # pygame.display.update()
+        for row in grid:
+            for node in row:
+                if node.get_cost() == 0:
+                    node.make_barrier()
+                elif node == start:
+                    node.make_start()
+                elif node == end:
+                    node.make_end()
+                else:
+                    node.reset()
+                pygame.draw.rect(WINDOW, node.color, (
+                    node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
+                    maze.get_square_size(),
+                    maze.get_square_size()))
+        start.make_start()
+        end.make_end()
+        draw_grid(maze=maze)
+        pygame.display.update()
     time_end = time.time()
     print("time in sec: ", time_end - time_start)
     return False

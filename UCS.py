@@ -68,7 +68,7 @@ def ucs(maze):
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        # draw_node(maze, current_node)
+        draw_node(maze, current_node)
 
         if current_node.get_parent() is not None:   # tree
             current_node.get_parent().tree_neighbors.append(current_node)
@@ -79,7 +79,7 @@ def ucs(maze):
             while current_node.get_parent() != None:
                 maze.get_path().append(current_node)
                 current_node.make_path()
-                # draw_node(maze, current_node)
+                draw_node(maze, current_node)
                 current_node = current_node.get_parent()
             maze.get_path().append(start_node)
             maze.print(time_end - time_start)
@@ -93,7 +93,7 @@ def ucs(maze):
                 while current_node.get_parent() is not None:
                     maze.get_path().append(current_node)
                     current_node.make_path()
-                    # draw_node(maze, current_node)
+                    draw_node(maze, current_node)
                     current_node = current_node.get_parent()
                 maze.get_path().append(start_node)
                 time_end = time.time()
@@ -109,7 +109,7 @@ def ucs(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
+                draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_parent(current_node)
@@ -118,6 +118,6 @@ def ucs(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
+                draw_node(maze, neighbor)
 
     return False

@@ -15,7 +15,7 @@ def heuristic1(maze, node, end):
     d2 = math.sqrt(2)
     d2 = 1
 
-    retval = (dx + dy) * 500
+    retval = (dx + dy) * 1
 
     # return (d1 * (dx + dy)) + ((d2 - (2 * d1)) * min(dx, dy))
 

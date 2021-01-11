@@ -63,7 +63,7 @@ def idAstar(maze):
             while end_node.get_parent() is not None:
                 maze.get_path().append(end_node)
                 end_node.make_path()
-                # draw_node(maze, end_node)
+                draw_node(maze, end_node)
                 end_node = end_node.get_parent()
             maze.get_path().append(start_node)
             time_end = time.time()
@@ -73,24 +73,24 @@ def idAstar(maze):
             print("not found")
             return False
         else:
-            # for row in maze.get_grid():
-            #     for node in row:
-            #         if node.get_cost() == 0:
-            #             node.make_barrier()
-            #         elif node == start_node:
-            #             node.make_start()
-            #         elif node == end_node:
-            #             node.make_end()
-            #         else:
-            #             node.reset()
-            #         pygame.draw.rect(WINDOW, node.color, (
-            #             node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-            #             maze.get_square_size(),
-            #             maze.get_square_size()))
-            # start_node.make_start()
-            # end_node.make_end()
-            # draw_grid(maze=maze)
-            # pygame.display.update()
+            for row in maze.get_grid():
+                for node in row:
+                    if node.get_cost() == 0:
+                        node.make_barrier()
+                    elif node == start_node:
+                        node.make_start()
+                    elif node == end_node:
+                        node.make_end()
+                    else:
+                        node.reset()
+                    pygame.draw.rect(WINDOW, node.color, (
+                        node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
+                        maze.get_square_size(),
+                        maze.get_square_size()))
+            start_node.make_start()
+            end_node.make_end()
+            draw_grid(maze=maze)
+            pygame.display.update()
             threshold = temp
 
 
@@ -99,7 +99,7 @@ def idastar_helper(maze, node, end_node, threshold, visited):
         return False
     node.make_closed()
     maze.update_expanded_nodes()
-    # draw_node(maze, node)
+    draw_node(maze, node)
     if (node.get_x(), node.get_y()) == (end_node.get_x(), end_node.get_y()):
         return -1
 
@@ -115,7 +115,7 @@ def idastar_helper(maze, node, end_node, threshold, visited):
         calculate_f_cost(maze, neighbor, end_node)
         neighbor.set_parent(node)
         neighbor.make_open()
-        # draw_node(maze, neighbor)
+        draw_node(maze, neighbor)
         f = neighbor.get_f()
         if f <= threshold:
             fn = min(fn, idastar_helper(maze, neighbor, end_node, threshold, visited))
