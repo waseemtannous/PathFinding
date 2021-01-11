@@ -12,7 +12,8 @@ root.title("Path Finding")
 root.configure(background='#2b2b2b')
 root.geometry("300x300")  # width X height
 root.resizable(False, False)
-max_time = 100
+max_time = 0.0001
+global maze
 
 
 def import_file():  # a function to read a text file and analyze it
@@ -20,7 +21,7 @@ def import_file():  # a function to read a text file and analyze it
     global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
@@ -28,7 +29,7 @@ def import_file():  # a function to read a text file and analyze it
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\120a.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\120a.txt"
     f = open(file, 'r')
 
     first_line = f.readline()
@@ -43,7 +44,7 @@ def import_file():  # a function to read a text file and analyze it
     else:
         algo_type = AlgorithmType.IDS
 
-    algo_type = AlgorithmType.ASTAR
+    algo_type = AlgorithmType.UCS
 
     second_line = f.readline()
     size = int(second_line)
@@ -110,6 +111,7 @@ def set_neighbors(maze):
 
 
 def start_maze():
+    global maze
     run_thread = threading.Thread(target=timer, args=[maze])
     run_thread.start()
     maze.run()
@@ -122,11 +124,11 @@ def timer(maze):    # todo: ida ids not working with timer
     while True:
         print('test')
         diff_time = time.time() - start_time
-        if (not maze.running) and maze.found:
-            return
         if diff_time > max_time and maze.running:
             maze.running = False
             print('not found')
+            return
+        if (not maze.running) and maze.found:
             return
 
     # time.sleep(max_time)
