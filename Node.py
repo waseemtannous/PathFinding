@@ -145,9 +145,7 @@ class Node:
             self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x() + 1][self.get_y() - 1].get_cost())
             self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, grid[self.get_x() + 1][self.get_y() - 1].get_cost())
 
-
-        # self.neighbors.sort(key=get_cost)
-
+    # these will determine how the heap will sort the nodes
     def __lt__(self, other):
         if self.f == other.f:
             return self.h < other.h
@@ -167,6 +165,7 @@ class Node:
     def make_grey(self):
         self.color = GREY
 
+    # determine which direction to get from this node to other
     def direction(self, other):  # self = parent, other = neighbor
         dx = other.get_x() - self.get_x()
         dy = other.get_y() - self.get_y()
@@ -188,6 +187,3 @@ class Node:
         if dx == -1 and dy == -1:
             return "LU"
 
-
-def get_cost(node):
-    return node.get_cost()

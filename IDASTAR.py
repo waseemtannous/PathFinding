@@ -3,9 +3,9 @@ from Colors import *
 from Heuristics import *
 import time
 
-
 WIDTH = 800
 WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
+
 
 def draw(maze):
     pygame.display.set_caption("Path Finding")
@@ -43,25 +43,29 @@ def draw_node(maze, node):
 
 
 def idAstar(maze):
+    # set maximum run time
     # maze.max_time = math.sqrt(maze.size)
     maze.max_time = 1000
     x1, y1 = maze.get_start()
     x2, y2 = maze.get_end()
 
+    # get start and end nodes
     start_node = maze.get_grid()[x1][y1]
     end_node = maze.get_grid()[x2][y2]
 
+    # the starting threashold is the f_cost of start node
     calculate_f_cost(maze, start_node, end_node)
     threshold = start_node.get_f()
 
     time_start = time.time()
 
     while threshold < float('inf'):
-        visited = {}
-        visited[start_node] = 0
+        visited = {start_node: 0}
+        # temp will be the next threashold
         temp = idastar_helper(maze, start_node, end_node, threshold, visited, time_start)
         if temp == -1:
             maze.actual_time = time.time() - time_start
+            # loop to make the path
             while end_node.get_parent() is not None:
                 maze.get_path().append(end_node)
                 end_node.make_path()
@@ -90,26 +94,33 @@ def idAstar(maze):
             end_node.make_end()
             draw_grid(maze=maze)
             pygame.display.update()
+            # update the threashold
             threshold = temp
 
 
 def idastar_helper(maze, node, end_node, threshold, visited, time_start):
+    # check if time has finished
     if not (time.time() - time_start <= maze.max_time):
         return -2
 
     node.make_closed()
     maze.update_expanded_nodes()
     draw_node(maze, node)
+
+    # check if this is the end node
     if (node.get_x(), node.get_y()) == (end_node.get_x(), end_node.get_y()):
         return -1
 
     fn = float('inf')
     neighbors = node.get_neighbors()
+
+    # recurse for all neighbors
     for neighbor in neighbors:
         if fn == -1:
             return -1
         current_cost = node.get_g() + neighbor.get_cost()
         if neighbor in visited:
+            # check if we visited this node in less g_cost
             if visited.get(neighbor) <= current_cost:
                 continue
         visited[neighbor] = current_cost
@@ -120,10 +131,12 @@ def idastar_helper(maze, node, end_node, threshold, visited, time_start):
         neighbor.make_open()
         draw_node(maze, neighbor)
         f = neighbor.get_f()
+        # update the threashold
         if f <= threshold:
             fn = min(fn, idastar_helper(maze, neighbor, end_node, threshold, visited, time_start))
             maze.update_cuttoff(node.get_depth())
         else:
             fn = min(fn, f)
             maze.update_cuttoff(node.get_depth())
+    # this returns the next threashold
     return fn
