@@ -22,9 +22,9 @@ def import_file():  # a function to read a text file and analyze it
     global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
@@ -44,7 +44,7 @@ def import_file():  # a function to read a text file and analyze it
     else:
         algo_type = AlgorithmType.IDS
 
-    algo_type = AlgorithmType.BIASTAR
+    algo_type = AlgorithmType.IDASTAR
 
     second_line = f.readline()
     size = int(second_line)
@@ -155,29 +155,8 @@ def set_neighbors(maze):
 
 
 def start_maze():
-    # run_thread = threading.Thread(target=timer, args=[maze])
-    # run_thread.start()
-    # run_thread.join()
     maze.run()
     # exit(0)
-
-
-def timer(maze):
-    start_time = time.time()
-    while True:
-        diff_time = time.time() - start_time
-        if not maze.running:
-            return
-        if diff_time > max_time and maze.running:
-            maze.running = False
-            print('not found')
-            return
-
-    # time.sleep(max_time)
-    # if not maze.found:
-    #     maze.running = False
-    #     print('NOT FOUND')
-    #     exit(0)
 
 
 import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f41', fg='#a9b7c6', bd=0,

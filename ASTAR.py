@@ -45,6 +45,8 @@ def draw_node(maze, node):
 
 
 def astar(maze):
+    maze.max_time = math.sqrt(maze.size)
+    # maze.max_time = 0.8
     time_start = time.time()
     open_heap = []
 
@@ -63,7 +65,7 @@ def astar(maze):
 
     previous_node = None
 
-    while len(open_heap) != 0 and maze.running:
+    while len(open_heap) != 0 and (time.time() - time_start <= maze.max_time):
         current_node = heapq.heappop(open_heap)
         maze.update_expanded_nodes()
         current_node.make_closed()
@@ -78,15 +80,13 @@ def astar(maze):
         previous_node = current_node
 
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
-            maze.found = True
-            time_end = time.time()
+            maze.actual_time = time.time() - time_start
             while current_node.get_parent() is not None:
                 maze.get_path().append(current_node)
                 current_node.make_path()
                 draw_node(maze, current_node)
                 current_node = current_node.get_parent()
             maze.get_path().append(start_node)
-            maze.print(time_end - time_start)
             return True
         neighbors = current_node.get_neighbors()
         for neighbor in neighbors:

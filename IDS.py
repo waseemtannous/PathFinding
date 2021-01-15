@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import time
 from Colors import *
@@ -42,8 +44,8 @@ def draw_node(maze, node):
 
 
 # depth limited search
-def dls(current_node, end, max_depth, maze, visited):
-    if not maze.running:
+def dls(current_node, end, max_depth, maze, visited, time_start):
+    if not (time.time() - time_start <= maze.max_time):
         return False
 
     if current_node == end:
@@ -88,7 +90,7 @@ def dls(current_node, end, max_depth, maze, visited):
         node.set_parent(current_node)
         visited[node] = True
         node.set_g(current_cost)
-        if dls(node, end, max_depth - 1, maze, visited):
+        if dls(node, end, max_depth - 1, maze, visited, time_start):
             node.make_path()
             draw_node(maze, node)
             maze.get_path().append(node)
@@ -99,22 +101,24 @@ def dls(current_node, end, max_depth, maze, visited):
 
 
 def ids(maze):
+    maze.max_time = math.sqrt(maze.size)
+    # maze.max_time = maze.size
+    # maze.max_time = 10000
+    # maze.max_time = 0.8
     grid = maze.get_grid()
     x1, y1 = maze.get_start()
     x2, y2 = maze.get_end()
     start = grid[x1][y1]
     end = grid[x2][y2]
     # depth limit search till max depth
-    max_depth = 100  # todo change this
+    size = maze.size
+    max_depth = size * size # todo: check if ok
     time_start = time.time()
     for depth in range(max_depth):
-        if not maze.running:
-            return False
-        visited = {start: True}
-        if dls(current_node=start, end=end, max_depth=depth, maze=maze, visited=visited):
-            time_end = time.time()
+        visited = {start: 0}
+        if dls(current_node=start, end=end, max_depth=depth, maze=maze, visited=visited, time_start=time_start):
+            maze.actual_time = time.time() - time_start
             maze.get_path().append(start)
-            maze.print(time_end - time_start)
             return True
         for row in grid:
             for node in row:
@@ -134,6 +138,4 @@ def ids(maze):
         end.make_end()
         draw_grid(maze=maze)
         pygame.display.update()
-    time_end = time.time()
-    print("time in sec: ", time_end - time_start)
     return False

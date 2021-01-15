@@ -25,6 +25,8 @@ class Maze:
         self.max_cuttoff = (-1) * float('inf')
         self.sum_cuttoff = 0
         self.number_cuttoff = 0
+        self.max_time = 0
+        self.actual_time = 0
 
 
         self.solution_depth = 0
@@ -32,27 +34,37 @@ class Maze:
         self.depth_array = []
 
     def run(self):
+        result = False
         if self.algotype == AlgorithmType.ASTAR:
             ASTAR.draw(self)
-            ASTAR.astar(self)
+            result = ASTAR.astar(self)
         elif self.algotype == AlgorithmType.IDASTAR:
             IDASTAR.draw(self)
-            IDASTAR.idAstar(self)
+            result = IDASTAR.idAstar(self)
         elif self.algotype == AlgorithmType.UCS:
             UCS.draw(self)
-            UCS.ucs(self)
+            result = UCS.ucs(self)
         elif self.algotype == AlgorithmType.IDS:
             IDS.draw(self)
-            IDS.ids(self)
+            result = IDS.ids(self)
         elif self.algotype == AlgorithmType.BIASTAR:
             BIASTAR.draw(self)
-            BIASTAR.biAstar(self)
+            result = BIASTAR.biAstar(self)
+        if result:
+            self.print()
+        else:
+            self.print_not_found()
 
-    def print(self, time):
+
+    def print_not_found(self):
+        print("Not Found!")
+
+
+    def print(self):
         self.solution_depth = len(self.get_path()) - 1
         self.print_path()
         ebf = pow(self.number_of_expanded_nodes, (1 / self.solution_depth))
-        print("time in sec: ", time)
+        print("time in sec: ", self.actual_time)
         print("N = ", self.number_of_expanded_nodes)
         print("d = ", self.solution_depth)
         print("EBF = ", ebf)
@@ -86,7 +98,7 @@ class Maze:
 
 
     def print_path(self):
-        path = self.get_path()
+        path = self.PATH
         node = path.pop()
         cost = 0
         print('path length: ' + str(len(path)))

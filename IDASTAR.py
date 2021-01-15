@@ -43,6 +43,8 @@ def draw_node(maze, node):
 
 
 def idAstar(maze):
+    # maze.max_time = math.sqrt(maze.size)
+    maze.max_time = 1
     x1, y1 = maze.get_start()
     x2, y2 = maze.get_end()
 
@@ -54,11 +56,12 @@ def idAstar(maze):
 
     time_start = time.time()
 
-    while threshold < float('inf') and maze.running:
+    while threshold < float('inf'):
         visited = {}
         visited[start_node] = 0
-        temp = idastar_helper(maze, start_node, end_node, threshold, visited)
-        if temp < 0:
+        temp = idastar_helper(maze, start_node, end_node, threshold, visited, time_start)
+        if temp == -1:
+            maze.actual_time = time.time() - time_start
             print("found")
             while end_node.get_parent() is not None:
                 maze.get_path().append(end_node)
@@ -66,11 +69,8 @@ def idAstar(maze):
                 draw_node(maze, end_node)
                 end_node = end_node.get_parent()
             maze.get_path().append(start_node)
-            time_end = time.time()
-            maze.print(time_end - time_start)
             return True
-        elif temp == float("inf"):
-            print("not found")
+        elif temp == -2:
             return False
         else:
             for row in maze.get_grid():
@@ -94,9 +94,9 @@ def idAstar(maze):
             threshold = temp
 
 
-def idastar_helper(maze, node, end_node, threshold, visited):
-    if not maze.running:
-        return False
+def idastar_helper(maze, node, end_node, threshold, visited, time_start):
+    if not (time.time() - time_start <= maze.max_time):
+        return -2
 
     node.make_closed()
     maze.update_expanded_nodes()
@@ -104,7 +104,7 @@ def idastar_helper(maze, node, end_node, threshold, visited):
     if (node.get_x(), node.get_y()) == (end_node.get_x(), end_node.get_y()):
         return -1
 
-    fn = float("inf")
+    fn = float('inf')
     neighbors = node.get_neighbors()
     for neighbor in neighbors:
         current_cost = node.get_g() + neighbor.get_cost()
@@ -120,7 +120,7 @@ def idastar_helper(maze, node, end_node, threshold, visited):
         draw_node(maze, neighbor)
         f = neighbor.get_f()
         if f <= threshold:
-            fn = min(fn, idastar_helper(maze, neighbor, end_node, threshold, visited))
+            fn = min(fn, idastar_helper(maze, neighbor, end_node, threshold, visited, time_start))
             maze.update_cuttoff(node.get_depth())
         else:
             fn = min(fn, f)

@@ -45,7 +45,8 @@ def draw_node(maze, node):
     pygame.display.update()
 
 def biAstar(maze):
-
+    maze.max_time = math.sqrt(maze.size)
+    # maze.max_time = 0.01
     time_start = time.time()
     open_heap_start = []
     open_heap_end = []
@@ -81,7 +82,7 @@ def biAstar(maze):
     previous_node_start = None
     previous_node_end = None
 
-    while len(open_heap_start) != 0 and len(open_heap_end) and maze.running:
+    while len(open_heap_start) != 0 and len(open_heap_end) and (time.time() - time_start <= maze.max_time):
         current_node_start = heapq.heappop(open_heap_start)
         current_node_start.make_closed()
         open_dictionary_start[current_node_start] = False
@@ -97,12 +98,10 @@ def biAstar(maze):
         temp1 = second_grid[current_node_start.get_x()][current_node_start.get_y()]
 
         if closed_dictionary_end.get(temp1, False):
-            maze.found = True
-            time_end = time.time()
+            maze.actual_time = time.time() - time_start
             temp1.make_grey()
             draw_node(maze, temp1)
             recreate_bidirectional_path(maze, temp1, came_from_start, came_from_end)
-            maze.print(time_end - time_start)
             return True
         maze.update_expanded_nodes()
         biAstar_helper(maze, current_node_start, end_node, open_dictionary_start, closed_dictionary_start, came_from_start, open_heap_start)
@@ -124,12 +123,10 @@ def biAstar(maze):
         temp2 = grid[current_node_end.get_x()][current_node_end.get_y()]
 
         if closed_dictionary_start.get(temp2, False):
-            maze.found = True
-            time_end = time.time()
+            maze.actual_time = time.time() - time_start
             temp2.make_grey()
             draw_node(maze, temp2)
             recreate_bidirectional_path(maze, temp2, came_from_start, came_from_end)
-            maze.print(time_end - time_start)
             return True
         maze.update_expanded_nodes()
         biAstar_helper(maze, current_node_end, start_node, open_dictionary_end, closed_dictionary_end, came_from_end, open_heap_end)
