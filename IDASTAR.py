@@ -44,7 +44,7 @@ def draw_node(maze, node):
 
 def idAstar(maze):
     # maze.max_time = math.sqrt(maze.size)
-    maze.max_time = 1
+    maze.max_time = 1000
     x1, y1 = maze.get_start()
     x2, y2 = maze.get_end()
 
@@ -62,7 +62,6 @@ def idAstar(maze):
         temp = idastar_helper(maze, start_node, end_node, threshold, visited, time_start)
         if temp == -1:
             maze.actual_time = time.time() - time_start
-            print("found")
             while end_node.get_parent() is not None:
                 maze.get_path().append(end_node)
                 end_node.make_path()
@@ -75,7 +74,7 @@ def idAstar(maze):
         else:
             for row in maze.get_grid():
                 for node in row:
-                    if node.get_cost() == 0:
+                    if node.get_cost() == -1:
                         node.make_barrier()
                     elif node == start_node:
                         node.make_start()
@@ -107,6 +106,8 @@ def idastar_helper(maze, node, end_node, threshold, visited, time_start):
     fn = float('inf')
     neighbors = node.get_neighbors()
     for neighbor in neighbors:
+        if fn == -1:
+            return -1
         current_cost = node.get_g() + neighbor.get_cost()
         if neighbor in visited:
             if visited.get(neighbor) <= current_cost:

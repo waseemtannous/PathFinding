@@ -123,6 +123,10 @@ class Maze:
         self.number_cuttoff += 1
 
     def print_cuttoff(self):
+        if self.number_cuttoff == 0:
+            self.min_cuttoff = 0
+            self.min_cuttoff = 0
+            self.number_cuttoff = 1
         print("min tree depth = ", self.min_cuttoff)
         print("max tree depth = ", self.max_cuttoff)
         print("avg tree depth = ", (self.sum_cuttoff / self.number_cuttoff))

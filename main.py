@@ -14,20 +14,19 @@ root.title("Path Finding")
 root.configure(background='#2b2b2b')
 root.geometry("300x300")  # width X height
 root.resizable(False, False)
-max_time = 0.000001
 
 
 def import_file():  # a function to read a text file and analyze it
     global maze
-    global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\50.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
     f = open(file, 'r')
@@ -48,8 +47,6 @@ def import_file():  # a function to read a text file and analyze it
 
     second_line = f.readline()
     size = int(second_line)
-
-    # max_time = math.sqrt(size)
 
     third_line = f.readline()
     arr = [int(num) for num in third_line.split(',')]

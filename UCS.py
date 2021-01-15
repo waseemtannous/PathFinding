@@ -47,8 +47,8 @@ def draw_node(maze, node):
 
 
 def ucs(maze):
-    maze.max_time = math.sqrt(maze.size)
-    # maze.max_time = 0.8
+    # maze.max_time = math.sqrt(maze.size)
+    maze.max_time = 1000
     time_start = time.time()
     open_heap = []
 
@@ -74,7 +74,7 @@ def ucs(maze):
         current_node.make_closed()
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        draw_node(maze, current_node)
+        # draw_node(maze, current_node)
 
         if previous_node:
             if not previous_node.is_neighbor(current_node):
@@ -105,7 +105,7 @@ def ucs(maze):
                 neighbor.calculate_f()
                 heapq.heapify(open_heap)
                 neighbor.make_open()
-                draw_node(maze, neighbor)
+                # draw_node(maze, neighbor)
             elif closed_dictionary.get(neighbor, False):
                 if neighbor.get_g() <= neighbor_current_cost:
                     continue
@@ -118,7 +118,7 @@ def ucs(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                draw_node(maze, neighbor)
+                # draw_node(maze, neighbor)
             else:
                 neighbor.set_g(neighbor_current_cost)
                 neighbor.set_depth(current_node.get_depth())
@@ -128,6 +128,6 @@ def ucs(maze):
                 heapq.heappush(open_heap, neighbor)
                 neighbor.make_open()
                 open_dictionary[neighbor] = True
-                draw_node(maze, neighbor)
+                # draw_node(maze, neighbor)
 
     return False
