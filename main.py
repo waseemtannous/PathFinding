@@ -22,12 +22,12 @@ def import_file():  # a function to read a text file and analyze it
     global max_time
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
+    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
+    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
     f = open(file, 'r')
@@ -44,7 +44,7 @@ def import_file():  # a function to read a text file and analyze it
     else:
         algo_type = AlgorithmType.IDS
 
-    algo_type = AlgorithmType.IDASTAR
+    algo_type = AlgorithmType.BIASTAR
 
     second_line = f.readline()
     size = int(second_line)

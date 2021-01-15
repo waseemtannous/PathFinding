@@ -45,8 +45,8 @@ def draw_node(maze, node):
     pygame.display.update()
 
 def biAstar(maze):
-    maze.max_time = math.sqrt(maze.size)
-    # maze.max_time = 0.01
+    # maze.max_time = math.sqrt(maze.size)
+    maze.max_time = 1000
     time_start = time.time()
     open_heap_start = []
     open_heap_end = []
@@ -98,6 +98,7 @@ def biAstar(maze):
         temp1 = second_grid[current_node_start.get_x()][current_node_start.get_y()]
 
         if closed_dictionary_end.get(temp1, False):
+            temp1 = bidirectional_meeting_point(maze, temp1, open_heap_start, open_dictionary_end)
             maze.actual_time = time.time() - time_start
             temp1.make_grey()
             draw_node(maze, temp1)
@@ -123,6 +124,7 @@ def biAstar(maze):
         temp2 = grid[current_node_end.get_x()][current_node_end.get_y()]
 
         if closed_dictionary_start.get(temp2, False):
+            temp2 = bidirectional_meeting_point(maze, temp2, open_heap_start, open_dictionary_end)
             maze.actual_time = time.time() - time_start
             temp2.make_grey()
             draw_node(maze, temp2)
@@ -137,8 +139,6 @@ def biAstar(maze):
 def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_dictionary, came_from, open_heap):
     neighbors = current_node.get_neighbors()
     for neighbor in neighbors:
-        if neighbor.get_x() == 10 and neighbor.get_y() == 16:
-            print('here')
         neighbor_current_cost = current_node.get_g() + neighbor.get_cost()
         if open_dictionary.get(neighbor, False):
             if neighbor.get_g() <= neighbor_current_cost:
@@ -175,18 +175,34 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             draw_node(maze, neighbor)
 
 
+
+def bidirectional_meeting_point(maze, temp, open_heap_start, open_dictionary_end):
+    x, y = temp.get_x(), temp.get_y()
+    min_sum_f = maze.get_grid()[x][y].get_f() + maze.get_second_grid()[x][y].get_f()
+    min_node = temp
+
+    while len(open_heap_start) != 0:
+        current_node_start = heapq.heappop(open_heap_start)
+        current_node_end = maze.get_second_grid()[current_node_start.get_x()][current_node_start.get_y()]
+        if open_dictionary_end.get(current_node_end, False):
+            temp_min_f = current_node_start.get_f() + current_node_end.get_f()
+            if temp_min_f < min_sum_f:
+                min_sum_f = temp_min_f
+                min_node = current_node_start
+    return min_node
+
+
 def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
     node_x = node.get_x()
     node_y = node.get_y()
     node = maze.get_second_grid()[node_x][node_y]
     maze.get_path().append(node)
-    # node.make_path()
+    node.make_path()
     draw_node(maze, node)
 
 
 
     while came_from_end.get(node, False):
-        print(123)
         node = came_from_end[node]
         node.make_path()
         maze.get_path().append(node)
@@ -195,11 +211,9 @@ def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
 
     maze.get_path().reverse()
     node = maze.get_grid()[node_x][node_y]
-    print("saji")
 
     while node in came_from_start:
         node = came_from_start[node]
-        print(node.get_x(), ", ", node.get_y())
         node.make_path()
         maze.get_path().append(node)
         node.make_path()

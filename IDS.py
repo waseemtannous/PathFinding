@@ -115,6 +115,8 @@ def ids(maze):
     max_depth = size * size # todo: check if ok
     time_start = time.time()
     for depth in range(max_depth):
+        if not (time.time() - time_start <= maze.max_time):
+            return False
         visited = {start: 0}
         if dls(current_node=start, end=end, max_depth=depth, maze=maze, visited=visited, time_start=time_start):
             maze.actual_time = time.time() - time_start
