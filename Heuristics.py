@@ -1,6 +1,7 @@
 import math
 
 
+# calculates the heuristic and updates the f_cost of the node
 def calculate_f_cost(maze, node, end):
     heuristic = max(heuristic2(maze, node, end), heuristic3(maze, node, end))
     # heuristic = heuristic2(maze, node, end)
@@ -28,7 +29,9 @@ def calculate_f_cost(maze, node, end):
 #     #     return (14 * dy) + (10 * (dx - dy))
 #     # else:
 #     #     return (14 * dx) + (10 * (dy - dx))
-def heuristic2(maze, node, end):    # euclidean distance
+
+
+def heuristic2(maze, node, end):  # euclidean distance
     dx = abs(node.get_x() - end.get_x())
     dy = abs(node.get_y() - end.get_y())
 
@@ -43,6 +46,7 @@ def heuristic2(maze, node, end):    # euclidean distance
     maze.avg_hval.append(retval)
 
     return retval
+
 
 def heuristic1(maze, node, end):
     dx = abs(node.get_x() - end.get_x())

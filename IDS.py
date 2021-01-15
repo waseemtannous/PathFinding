@@ -45,13 +45,15 @@ def draw_node(maze, node):
 
 # depth limited search
 def dls(current_node, end, max_depth, maze, visited, time_start):
+    # check if time has ended
     if not (time.time() - time_start <= maze.max_time):
         return False
 
+    # check if current node is the end node
     if current_node == end:
         return True
 
-    # If reached the maximum depth, stop recursing.
+    # if reached the maximum depth, stop recursing.
     if max_depth <= 0:
         maze.update_cuttoff(current_node.depth)
         return False
@@ -70,10 +72,12 @@ def dls(current_node, end, max_depth, maze, visited, time_start):
         pygame.display.update()
 
     maze.update_expanded_nodes()
-    # Recur for all the vertices adjacent to this vertex
+
+    # recurse for all the neighbors
     neighbors = current_node.get_neighbors()
     for node in neighbors:
         current_cost = current_node.get_g() + node.get_cost()
+        # check if we have reachec this node in less g cost
         if visited.get(node, False):
             if node.get_g() <= current_cost:
                 continue
@@ -99,8 +103,8 @@ def dls(current_node, end, max_depth, maze, visited, time_start):
     return False
 
 
-
 def ids(maze):
+    # set maximum run time
     maze.max_time = math.sqrt(maze.size)
     # maze.max_time = maze.size
     # maze.max_time = 10000
@@ -108,13 +112,14 @@ def ids(maze):
     grid = maze.get_grid()
     x1, y1 = maze.get_start()
     x2, y2 = maze.get_end()
+    # get start and end nodes
     start = grid[x1][y1]
     end = grid[x2][y2]
-    # depth limit search till max depth
-    size = maze.size
-    max_depth = size * size # todo: check if ok
+    max_depth = int('inf')
     time_start = time.time()
+    # depth limit search till max depth
     for depth in range(max_depth):
+        # check if time has ended
         if not (time.time() - time_start <= maze.max_time):
             return False
         visited = {start: 0}

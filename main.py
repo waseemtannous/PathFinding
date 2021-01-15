@@ -5,10 +5,9 @@ from AlgorithmType import *
 from Colors import *
 from Maze import Maze
 from Node import Node
-import threading
-import time
-import math
 
+
+# main UI
 root = Tk()  # main window
 root.title("Path Finding")
 root.configure(background='#2b2b2b')
@@ -18,6 +17,7 @@ root.resizable(False, False)
 
 def import_file():  # a function to read a text file and analyze it
     global maze
+    # asks the user to input a valid file
     # file = filedialog.askopenfilename(initialdir="/", title="Select File",
     #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\17.txt"
@@ -31,6 +31,7 @@ def import_file():  # a function to read a text file and analyze it
     # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
     f = open(file, 'r')
 
+    # determine which algorithm to run
     first_line = f.readline()
     if first_line == 'BIASTAR\n':
         algo_type = AlgorithmType.BIASTAR
@@ -45,50 +46,36 @@ def import_file():  # a function to read a text file and analyze it
 
     algo_type = AlgorithmType.BIASTAR
 
+    # matrix dimension
     second_line = f.readline()
     size = int(second_line)
 
+    # start coordinates
     third_line = f.readline()
     arr = [int(num) for num in third_line.split(',')]
     start = (arr[0], arr[1])
 
+    #   end coordinates
     fourth_line = f.readline()
     arr = [int(num) for num in fourth_line.split(',')]
     end = (arr[0], arr[1])
 
+    # input the cost matrix
     matrix = [[int(num) for num in line.split(',')] for line in f if line.strip(' ') != ""]
 
-    length = 0
-    for row in matrix:
-        for _ in row:
-            length += 1
-
-    average = 0
-    minimum = matrix[0][0]
-    count = 0
-
-    for row in matrix:
-        for num in row:
-            if num != -1:
-                count += 1
-                average += num
-                if num < minimum:
-                    minimum = num
-
-    average /= count
-
-    print("average ", average)
-    print("minimum ", minimum)
-
+    # save all relevant data in one object
     maze = Maze(algotype=algo_type, size=size, start=start, end=end, matrix=matrix)
 
     f.close()
-    make_grid(maze)
-    set_neighbors(maze)
+    make_grid()
+    set_neighbors()
+
+    # allow the user to run the algorithm
     start_button['state'] = NORMAL
 
 
-def make_grid(maze):
+# this function makes nodes and arranges them in a grid
+def make_grid():
     grid1 = []
     maze.set_square_size(800 // maze.get_size())
     for i in range(maze.get_size()):
@@ -114,6 +101,7 @@ def make_grid(maze):
 
     maze.set_grid(grid1)
 
+    # make the second grid to help us in biastar
     if maze.algotype == AlgorithmType.BIASTAR:
         grid2 = []
         for i in range(maze.get_size()):
@@ -139,7 +127,8 @@ def make_grid(maze):
         maze.set_second_grid(grid2)
 
 
-def set_neighbors(maze):
+# set the neighbors for every node
+def set_neighbors():
     grid = maze.get_grid()
     for row in grid:
         for node in row:
@@ -151,11 +140,13 @@ def set_neighbors(maze):
                 node.set_neighbors(maze, grid)
 
 
+# starts the maze
 def start_maze():
     maze.run()
     # exit(0)
 
 
+# here we add the UI buttons
 import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f41', fg='#a9b7c6', bd=0,
                        font=("JetBrains Mono", 18))
 start_button = Button(root, text="Start Maze", command=start_maze, bg='#3c3f41', fg='#a9b7c6', bd=0, state=DISABLED,
