@@ -1,47 +1,8 @@
-import pygame
 import time
 import heapq
-from Colors import *
 
 from Heuristics import *
 
-WIDTH = 800
-WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
-
-
-def draw(maze):
-    pygame.display.set_caption("Path Finding")
-
-    # make background white
-    WINDOW.fill(WHITE)
-
-    # draw the squares
-    for row in maze.get_grid():
-        for node in row:
-            pygame.draw.rect(WINDOW, node.color, (
-                node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-                maze.get_square_size()))
-
-    draw_grid(maze=maze)
-
-    # display on the screen
-    pygame.display.update()
-
-
-def draw_grid(maze):
-    for i in range(maze.get_size()):
-        pygame.draw.line(WINDOW, GREY, (0, i * maze.get_square_size()), (WIDTH, i * maze.get_square_size()))
-        for j in range(maze.get_size()):
-            pygame.draw.line(WINDOW, GREY, (j * maze.get_square_size(), 0), (j * maze.get_square_size(), WIDTH))
-
-
-def draw_node(maze, node):
-    pygame.draw.rect(WINDOW, node.color, (
-        node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-        maze.get_square_size(),
-        maze.get_square_size()))
-    draw_grid(maze=maze)
-    pygame.display.update()
 
 
 def biAstar(maze):
@@ -91,11 +52,9 @@ def biAstar(maze):
     while len(open_heap_start) != 0 and len(open_heap_end) and (time.time() - time_start <= maze.max_time):
         # We get the node with minimal cost
         current_node_start = heapq.heappop(open_heap_start)
-        current_node_start.make_closed()
         # Remove the node from the open list ,and add it to the close list
         open_dictionary_start[current_node_start] = False
         closed_dictionary_start[current_node_start] = True
-        # draw_node(maze, current_node_start)
 
         if previous_node_start:
             if not previous_node_start.is_neighbor(current_node_start):
@@ -110,8 +69,6 @@ def biAstar(maze):
                                                 open_dictionary_end,
                                                 closed_dictionary_start, closed_dictionary_end)
             maze.actual_time = time.time() - time_start
-            temp1.make_grey()
-            draw_node(maze, temp1)
             # Make path
             recreate_bidirectional_path(maze, temp1, came_from_start, came_from_end)
             return True
@@ -122,12 +79,9 @@ def biAstar(maze):
         #   second one #######################
         # We get the node with minimal cost
         current_node_end = heapq.heappop(open_heap_end)
-        current_node_end.make_closed()
-        current_node_end.make_blue()
         # Remove the node from the open list ,and add it to the close list
         open_dictionary_end[current_node_end] = False
         closed_dictionary_end[current_node_end] = True
-        # draw_node(maze, current_node_end)
 
         if previous_node_end:
             if not previous_node_end.is_neighbor(current_node_end):
@@ -142,8 +96,6 @@ def biAstar(maze):
                                                 open_dictionary_end,
                                                 closed_dictionary_start, closed_dictionary_end)
             maze.actual_time = time.time() - time_start
-            temp2.make_grey()
-            draw_node(maze, temp2)
             # Make path
             recreate_bidirectional_path(maze, temp2, came_from_start, came_from_end)
             return True
@@ -172,8 +124,6 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             came_from[neighbor] = current_node
             calculate_f_cost(maze, neighbor, end_node)
             heapq.heapify(open_heap)
-            neighbor.make_open()
-            # draw_node(maze, neighbor)
         # If the node is on the close list ENTER HERE
         elif closed_dictionary.get(neighbor, False):
             # If the cost is larger then do nothing
@@ -186,9 +136,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             came_from[neighbor] = current_node
             calculate_f_cost(maze, neighbor, end_node)
             heapq.heappush(open_heap, neighbor)
-            neighbor.make_open()
             open_dictionary[neighbor] = True
-            # draw_node(maze, neighbor)
         else:
             # Else add the node to open list
             neighbor.set_g(neighbor_current_cost)
@@ -196,10 +144,8 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             came_from[neighbor] = current_node
             calculate_f_cost(maze, neighbor, end_node)
             heapq.heappush(open_heap, neighbor)
-            neighbor.make_open()
             open_dictionary[neighbor] = True
             closed_dictionary[neighbor] = False
-            # draw_node(maze, neighbor)
 
 # This function tries to improve meeting point
 def bidirectional_meeting_point(maze, temp, open_heap_start, open_heap_end, open_dictionary_start, open_dictionary_end,
@@ -235,25 +181,14 @@ def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
     node_y = node.get_y()
     node = maze.get_second_grid()[node_x][node_y]
     maze.get_path().append(node)
-    node.make_path()
-    draw_node(maze, node)
     #Get the parents on the end side
     while came_from_end.get(node, False):
         node = came_from_end[node]
-        node.make_path()
         maze.get_path().append(node)
-        node.make_path()
-        draw_node(maze, node)
 
     maze.get_path().reverse()
     node = maze.get_grid()[node_x][node_y]
     # Get the parents on the start side
     while node in came_from_start:
         node = came_from_start[node]
-        node.make_path()
         maze.get_path().append(node)
-        node.make_path()
-        draw_node(maze, node)
-    node = maze.get_grid()[node_x][node_y]
-    node.make_grey()
-    draw_node(maze, node)

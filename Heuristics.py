@@ -1,6 +1,5 @@
 import math
 
-
 # calculates the heuristic and updates the f_cost of the node
 def calculate_f_cost(maze, node, end):
     heuristic = max(heuristic2(maze, node, end), heuristic3(maze, node, end))

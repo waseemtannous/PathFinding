@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import filedialog
 
 from AlgorithmType import *
-from Colors import *
 from Maze import Maze
 from Node import Node
 
@@ -81,22 +80,8 @@ def make_grid():
     for i in range(maze.get_size()):
         grid1.append([])
         for j in range(maze.get_size()):
-            cost = 0
-            x1, y1 = maze.get_start()
-            x2, y2 = maze.get_end()
-            if i == x1 and j == y1:
-                color = ORANGE
-                cost = maze.get_matrix()[i][j]
-            elif i == x2 and j == y2:
-                color = TURQUOISE
-                cost = maze.get_matrix()[i][j]
-            elif maze.get_matrix()[i][j] == -1:
-                color = BLACK
-            else:
-                color = WHITE
-                cost = maze.get_matrix()[i][j]
-
-            node = Node(x=i, y=j, color=color, cost=cost)
+            cost = maze.get_matrix()[i][j]
+            node = Node(x=i, y=j, cost=cost)
             grid1[i].append(node)
 
     maze.set_grid(grid1)
@@ -107,22 +92,8 @@ def make_grid():
         for i in range(maze.get_size()):
             grid2.append([])
             for j in range(maze.get_size()):
-                cost = 0
-                x1, y1 = maze.get_start()
-                x2, y2 = maze.get_end()
-                if i == x1 and j == y1:
-                    color = ORANGE
-                    cost = maze.get_matrix()[i][j]
-                elif i == x2 and j == y2:
-                    color = TURQUOISE
-                    cost = maze.get_matrix()[i][j]
-                elif maze.get_matrix()[i][j] == -1:
-                    color = BLACK
-                else:
-                    color = WHITE
-                    cost = maze.get_matrix()[i][j]
-
-                node = Node(x=i, y=j, color=color, cost=cost)
+                cost = maze.get_matrix()[i][j]
+                node = Node(x=i, y=j, cost=cost)
                 grid2[i].append(node)
         maze.set_second_grid(grid2)
 
@@ -143,7 +114,7 @@ def set_neighbors():
 # starts the maze
 def start_maze():
     maze.run()
-    # exit(0)
+    exit(0)
 
 
 # here we add the UI buttons

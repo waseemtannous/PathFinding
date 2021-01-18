@@ -1,49 +1,6 @@
-import math
-
-import pygame
 import time
 import heapq
-from Colors import *
 
-
-
-WIDTH = 800
-WINDOW = pygame.display.set_mode((WIDTH, WIDTH))
-
-
-def draw(maze):
-    pygame.display.set_caption("Path Finding")
-
-    # make background white
-    WINDOW.fill(WHITE)
-
-    # draw the squares
-    for row in maze.get_grid():
-        for node in row:
-            pygame.draw.rect(WINDOW, node.color, (
-                node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(), maze.get_square_size(),
-                maze.get_square_size()))
-
-    draw_grid(maze=maze)
-
-    # display on the screen
-    pygame.display.update()
-
-
-def draw_grid(maze):
-    for i in range(maze.get_size()):
-        pygame.draw.line(WINDOW, GREY, (0, i * maze.get_square_size()), (WIDTH, i * maze.get_square_size()))
-        for j in range(maze.get_size()):
-            pygame.draw.line(WINDOW, GREY, (j * maze.get_square_size(), 0), (j * maze.get_square_size(), WIDTH))
-
-
-def draw_node(maze, node):
-    pygame.draw.rect(WINDOW, node.color, (
-        node.get_y() * maze.get_square_size(), node.get_x() * maze.get_square_size(),
-        maze.get_square_size(),
-        maze.get_square_size()))
-    draw_grid(maze=maze)
-    pygame.display.update()
 
 # We used heuristic h=0 because the implementation is the same as A star
 def ucs(maze):
@@ -79,11 +36,9 @@ def ucs(maze):
         # We get the node with minimal cost
         current_node = heapq.heappop(open_heap)
         maze.update_expanded_nodes()
-        current_node.make_closed()
         # Remove the node from the open list ,and add it to the close list
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        # draw_node(maze, current_node)
 
         if previous_node:
             if not previous_node.is_neighbor(current_node):
@@ -97,8 +52,6 @@ def ucs(maze):
             while current_node.get_parent() != None:
                 # Add the node to the path
                 maze.get_path().append(current_node)
-                current_node.make_path()
-                draw_node(maze, current_node)
                 current_node = current_node.get_parent()
             maze.get_path().append(start_node)
             return True
@@ -119,8 +72,6 @@ def ucs(maze):
                 neighbor.set_h(0)
                 neighbor.calculate_f()
                 heapq.heapify(open_heap)
-                neighbor.make_open()
-                # draw_node(maze, neighbor)
             # If the node is on the close list ENTER HERE
             elif closed_dictionary.get(neighbor, False):
                 # If the cost is larger then do nothing
@@ -134,9 +85,7 @@ def ucs(maze):
                 neighbor.set_h(0)
                 neighbor.calculate_f()
                 heapq.heappush(open_heap, neighbor)
-                neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
             else:
                 # Else add the node to open list
                 neighbor.set_g(neighbor_current_cost)
@@ -145,8 +94,6 @@ def ucs(maze):
                 neighbor.set_h(0)
                 neighbor.calculate_f()
                 heapq.heappush(open_heap, neighbor)
-                neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
 
     return False

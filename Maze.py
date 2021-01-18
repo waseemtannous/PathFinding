@@ -11,7 +11,6 @@ class Maze:
     def __init__(self, algotype, size, start, end, matrix):
         self.grid = None  # this grid holds all the nodes
         self.second_grid = None  # this grid holds all the nodes and it hepls us in the biastar algorithm
-        self.square_size = None
         self.algotype = algotype  # enum whick indicates which algorithm we are running
         self.size = size  # matrix dimension
         self.start = start  # start node coordinates
@@ -32,19 +31,14 @@ class Maze:
     def run(self):  # this function runs the specified algorithm
         result = False
         if self.algotype == AlgorithmType.ASTAR:
-            ASTAR.draw(self)
             result = ASTAR.astar(self)
         elif self.algotype == AlgorithmType.IDASTAR:
-            IDASTAR.draw(self)
             result = IDASTAR.idAstar(self)
         elif self.algotype == AlgorithmType.UCS:
-            UCS.draw(self)
             result = UCS.ucs(self)
         elif self.algotype == AlgorithmType.IDS:
-            IDS.draw(self)
             result = IDS.ids(self)
         elif self.algotype == AlgorithmType.BIASTAR:
-            BIASTAR.draw(self)
             result = BIASTAR.biAstar(self)
         if result:  # if the path was found print it
             self.print()
@@ -131,9 +125,3 @@ class Maze:
 
     def get_second_grid(self):
         return self.second_grid
-
-    def set_square_size(self, square_size):
-        self.square_size = square_size
-
-    def get_square_size(self):
-        return self.square_size
