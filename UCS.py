@@ -48,6 +48,7 @@ def ucs(maze):
         # The GOAL node has been founded ENTER HERE!
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
             maze.actual_time = time.time() - time_start
+            maze.update_cuttoff(current_node.depth)
             # While the nodes are not the starting (that means they have a parent) point continue
             while current_node.get_parent() != None:
                 # Add the node to the path

@@ -5,10 +5,11 @@ import IDS
 import BIASTAR
 import UCS
 import IDASTAR
+import math
 
 
 class Maze:
-    def __init__(self, algotype, size, start, end, matrix):
+    def __init__(self, algotype, size, start, end, matrix, average):
         self.grid = None  # this grid holds all the nodes
         self.second_grid = None  # this grid holds all the nodes and it hepls us in the biastar algorithm
         self.algotype = algotype  # enum whick indicates which algorithm we are running
@@ -27,6 +28,9 @@ class Maze:
         self.actual_time = 0  # the actual time it took the algorithm to find the path
         self.solution_depth = 0  # the depth of the end node
         self.avg_hval = []  # the average value of the heuristic function
+
+
+        self.average = math.sqrt(average)
 
     def run(self):  # this function runs the specified algorithm
         result = False
@@ -55,6 +59,7 @@ class Maze:
         print("time in sec: ", self.actual_time)
         print("N = ", self.number_of_expanded_nodes)
         print("d = ", self.solution_depth)
+        print('d/N = ', self.solution_depth / self.number_of_expanded_nodes)
         print("EBF = ", ebf)
         sum = 0
         for num in self.avg_hval:

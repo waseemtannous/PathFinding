@@ -69,6 +69,7 @@ def biAstar(maze):
                                                 open_dictionary_end,
                                                 closed_dictionary_start, closed_dictionary_end)
             maze.actual_time = time.time() - time_start
+            maze.update_cuttoff(current_node_start.depth)
             # Make path
             recreate_bidirectional_path(maze, temp1, came_from_start, came_from_end)
             return True
@@ -95,6 +96,7 @@ def biAstar(maze):
             temp2 = bidirectional_meeting_point(maze, temp2, open_heap_start, open_heap_end, open_dictionary_start,
                                                 open_dictionary_end,
                                                 closed_dictionary_start, closed_dictionary_end)
+            maze.update_cuttoff(current_node_end.depth)
             maze.actual_time = time.time() - time_start
             # Make path
             recreate_bidirectional_path(maze, temp2, came_from_start, came_from_end)

@@ -14,7 +14,7 @@ def ids(maze):
     # get start and end nodes
     start = grid[x1][y1]
     end = grid[x2][y2]
-    max_depth = int('inf')
+    max_depth = maze.size * maze.size
     time_start = time.time()
     # depth limit search till max depth
     for depth in range(max_depth):
@@ -37,6 +37,7 @@ def dls(current_node, end, max_depth, maze, visited, time_start):
 
     # check if current node is the end node
     if current_node == end:
+        maze.update_cuttoff(current_node.depth)
         return True
 
     # if reached the maximum depth, stop recursing.

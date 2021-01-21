@@ -49,6 +49,7 @@ def astar(maze):
         # The GOAL node has been found ENTER HERE!
         if current_node.get_x() == end_node.get_x() and current_node.get_y() == end_node.get_y():
             maze.actual_time = time.time() - time_start
+            maze.update_cuttoff(current_node.depth)
             while current_node.get_parent() is not None:
                 # Add the node to the path
                 maze.get_path().append(current_node)

@@ -1,10 +1,8 @@
-
 class Node:
-    def __init__(self, x, y, color, cost):
+    def __init__(self, x, y, cost):
         self.parent = None
         self.x = x
         self.y = y
-        self.color = color
         self.cost = cost
         self.neighbors = []
         self.g = 0
@@ -59,55 +57,59 @@ class Node:
     def set_parent(self, parent):
         self.parent = parent
 
+    # checks if other node is a neighbor of this node
     def is_neighbor(self, other):
         for neighbor in self.neighbors:
-           if neighbor.get_x() == other.get_x() and neighbor.get_y() == other.get_y():
-               return True
+            if neighbor.get_x() == other.get_x() and neighbor.get_y() == other.get_y():
+                return True
         return False
 
-    def set_neighbors(self, maze):
-        grid = maze.get_grid()
+    def set_neighbors(self, maze, grid):
         self.neighbors = []
-        node = grid[self.get_x() - 1][self.get_y()]
-        if self.get_x() != 0 and not (node.get_cost() == -1):  # up
+        if self.get_x() != 0 and not (grid[self.get_x() - 1][self.get_y()].get_cost() == -1):  # up
+            node = grid[self.get_x() - 1][self.get_y()]
             self.neighbors.append(node)
             self.min_neighbor_cost = node.get_cost()
 
-        node = grid[self.get_x() + 1][self.get_y()]
-        if self.get_x() < maze.get_size() - 1 and not (node.get_cost() == -1):  # down
+        if self.get_x() < maze.get_size() - 1 and not (grid[self.get_x() + 1][self.get_y()].get_cost() == -1):  # down
+            node = grid[self.get_x() + 1][self.get_y()]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
 
-        node = grid[self.get_x()][self.get_y() - 1]
-        if self.get_y() != 0 and not (node.get_cost() == -1):  # left
+        if self.get_y() != 0 and not (grid[self.get_x()][self.get_y() - 1].get_cost() == -1):  # left
+            node = grid[self.get_x()][self.get_y() - 1]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
 
-        node = grid[self.get_x()][self.get_y() + 1]
-        if self.get_y() < maze.get_size() - 1 and not (node.get_cost() == -1):  # right
+        if self.get_y() < maze.get_size() - 1 and not (grid[self.get_x()][self.get_y() + 1].get_cost() == -1):  # right
+            node = grid[self.get_x()][self.get_y() + 1]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
 
-        node = grid[self.get_x() - 1][self.get_y() + 1]
-        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not (node.get_cost() == -1):  # right up
+        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not (
+                grid[self.get_x() - 1][self.get_y() + 1].get_cost() == -1):  # right up
+            node = grid[self.get_x() - 1][self.get_y() + 1]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
             self.min_diagonal_neighbor_cost = node.get_cost()
 
-        node = grid[self.get_x() + 1][self.get_y() + 1]
-        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not (node.get_cost() == -1):  # right down
+        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not (
+                grid[self.get_x() + 1][self.get_y() + 1].get_cost() == -1):  # right down
+            node = grid[self.get_x() + 1][self.get_y() + 1]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
             self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, node.get_cost())
 
-        node = grid[self.get_x() - 1][self.get_y() - 1]
-        if self.get_y() != 0 and self.get_x() != 0 and not (node.get_cost() == -1):  # left up
+        if self.get_y() != 0 and self.get_x() != 0 and not (
+                grid[self.get_x() - 1][self.get_y() - 1].get_cost() == -1):  # left up
+            node = grid[self.get_x() - 1][self.get_y() - 1]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
             self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, node.get_cost())
 
-        node = grid[self.get_x() + 1][self.get_y() - 1]
-        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not (node.get_cost() == -1):  # left down
+        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not (
+                grid[self.get_x() + 1][self.get_y() - 1].get_cost() == -1):  # left down
+            node = grid[self.get_x() + 1][self.get_y() - 1]
             self.neighbors.append(node)
             self.min_neighbor_cost = min(self.min_neighbor_cost, node.get_cost())
             self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, node.get_cost())
