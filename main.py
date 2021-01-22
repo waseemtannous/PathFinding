@@ -101,6 +101,7 @@ def set_neighbors():
 # starts the maze
 def start_maze():
     maze.run()
+    root.destroy()
     exit(0)
 
 
