@@ -4,8 +4,7 @@ from Heuristics import *
 
 
 def astar(maze):
-    # maze.max_time = math.sqrt(maze.size)
-    maze.max_time = 100
+    maze.max_time = 2 * math.sqrt(maze.size)
     time_start = time.time()
 
     # Min heap for choosing the minimum cost every time.

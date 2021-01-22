@@ -4,10 +4,8 @@ import math
 # calculates the heuristic and updates the f_cost of the node
 def calculate_f_cost(maze, node, end):
     heuristic = euclidean_distance(node, end)
-    # heuristic = octile_distance(node, end)
-    # heuristic = chebyshev_distance(node, end)
-    # heuristic = max_heuristic(node, end)
-    maze.avg_hval.append(heuristic)
+    maze.sum_h_val += heuristic
+    maze.num_h_val += 1
     node.set_h(heuristic)
     node.calculate_f()
 

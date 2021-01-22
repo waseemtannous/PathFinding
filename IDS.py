@@ -3,10 +3,7 @@ import math
 
 
 def ids(maze):
-    # set maximum run time
-    maze.max_time = math.sqrt(maze.size)
-    # maze.max_time = maze.size
-    # maze.max_time = 10000
+    maze.max_time = 2 * math.sqrt(maze.size)
     # maze.max_time = 0.8
     grid = maze.get_grid()
     x1, y1 = maze.get_start()
@@ -21,7 +18,7 @@ def ids(maze):
         # check if time has ended
         if not (time.time() - time_start <= maze.max_time):
             return False
-        visited = {start: 0}
+        visited = {start: True}
         if dls(current_node=start, end=end, max_depth=depth, maze=maze, visited=visited, time_start=time_start):
             maze.actual_time = time.time() - time_start
             maze.get_path().append(start)

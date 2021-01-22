@@ -4,8 +4,6 @@ from tkinter import filedialog
 from AlgorithmType import *
 from Maze import Maze
 from Node import Node
-import statistics
-
 
 # main UI
 root = Tk()  # main window
@@ -18,25 +16,8 @@ root.resizable(False, False)
 def import_file():  # a function to read a text file and analyze it
     global maze
     # asks the user to input a valid file
-    # file = filedialog.askopenfilename(initialdir="/", title="Select File",
-    #                                   filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\50.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\60-2.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\4_BIASTAR_30X30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix 30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\test matrix2 30.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\1000.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\40.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\40-2.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\40-1-5.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\New folder\\input1.txt"
-    file = "S:\\onedrive\\sync\\pythonAI\\matrices\\New folder\\input3.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\New folder\\input5.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\New folder\\input6.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\New folder\\input8.txt"
-    # file = "S:\\onedrive\\sync\\pythonAI\\matrices\\New folder\\input10.txt"
+    file = filedialog.askopenfilename(initialdir="/", title="Select File",
+                                      filetypes=(("Text", "*.txt"), ("All Files", "*.*")))
     f = open(file, 'r')
 
     # determine which algorithm to run
@@ -51,8 +32,6 @@ def import_file():  # a function to read a text file and analyze it
         algo_type = AlgorithmType.UCS
     else:
         algo_type = AlgorithmType.IDS
-
-    algo_type = AlgorithmType.IDASTAR
 
     # matrix dimension
     second_line = f.readline()
@@ -71,33 +50,8 @@ def import_file():  # a function to read a text file and analyze it
     # input the cost matrix
     matrix = [[int(num) for num in line.split(',')] for line in f if line.strip(' ') != ""]
 
-    minimm = float('inf')
-    maximum = -1 * float('inf')
-    sum = 0
-    num = 0
-    array = []
-    for row in matrix:
-        for number in row:
-            if number == -1:
-                continue
-            minimm = min(minimm, number)
-            maximum = max(maximum, number)
-            sum += number
-            num += 1
-    average = sum / num
-    print('avg = ', average)
-    print('min = ', minimm)
-
-    for i in range(len(matrix[0])):
-        for j in range(len(matrix[0])):
-            if matrix[i][j] == -1:
-                continue
-            array.append(matrix[i][j])
-            # matrix[i][j] /= maximum
-
-    print('median = ', statistics.median(array))
     # save all relevant data in one object
-    maze = Maze(algotype=algo_type, size=size, start=start, end=end, matrix=matrix, average=average)
+    maze = Maze(algotype=algo_type, size=size, start=start, end=end, matrix=matrix)
 
     f.close()
     make_grid()

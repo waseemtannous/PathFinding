@@ -4,10 +4,8 @@ import heapq
 from Heuristics import *
 
 
-
 def biAstar(maze):
-    # maze.max_time = math.sqrt(maze.size)
-    maze.max_time = 1000
+    maze.max_time = 2 * math.sqrt(maze.size)
     time_start = time.time()
     # Min heap for choosing the minimum cost every time.
     open_heap_start = []
@@ -149,6 +147,7 @@ def biAstar_helper(maze, current_node, end_node, open_dictionary, closed_diction
             open_dictionary[neighbor] = True
             closed_dictionary[neighbor] = False
 
+
 # This function tries to improve meeting point
 def bidirectional_meeting_point(maze, temp, open_heap_start, open_heap_end, open_dictionary_start, open_dictionary_end,
                                 closed_dictionary_start, closed_dictionary_end):
@@ -169,7 +168,8 @@ def bidirectional_meeting_point(maze, temp, open_heap_start, open_heap_end, open
     while len(open_heap_end) != 0:
         current_node_end = heapq.heappop(open_heap_end)
         current_node_start = maze.get_grid()[current_node_end.get_x()][current_node_end.get_y()]
-        if open_dictionary_start.get(current_node_start, False) or closed_dictionary_start.get(current_node_start, False):
+        if open_dictionary_start.get(current_node_start, False) or closed_dictionary_start.get(current_node_start,
+                                                                                               False):
             temp_min_f = current_node_end.get_f() + current_node_start.get_f()
             # Update the meeting point
             if temp_min_f < min_sum_f:
@@ -183,7 +183,7 @@ def recreate_bidirectional_path(maze, node, came_from_start, came_from_end):
     node_y = node.get_y()
     node = maze.get_second_grid()[node_x][node_y]
     maze.get_path().append(node)
-    #Get the parents on the end side
+    # Get the parents on the end side
     while came_from_end.get(node, False):
         node = came_from_end[node]
         maze.get_path().append(node)

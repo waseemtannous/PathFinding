@@ -1,11 +1,11 @@
+import math
 import time
 import heapq
 
 
 # We used heuristic h=0 because the implementation is the same as A star
 def ucs(maze):
-    # maze.max_time = math.sqrt(maze.size)
-    maze.max_time = 1000
+    maze.max_time = 2 * math.sqrt(maze.size)
     time_start = time.time()
 
     # Min heap for choosing the minimum cost every time.
@@ -22,7 +22,6 @@ def ucs(maze):
     # Getting start node and the goal node
     start_node = maze.get_grid()[x1][y1]
     end_node = maze.get_grid()[x2][y2]
-
 
     start_node.set_h(0)
     start_node.calculate_f()
@@ -50,7 +49,7 @@ def ucs(maze):
             maze.actual_time = time.time() - time_start
             maze.update_cuttoff(current_node.depth)
             # While the nodes are not the starting (that means they have a parent) point continue
-            while current_node.get_parent() != None:
+            while current_node.get_parent() is not None:
                 # Add the node to the path
                 maze.get_path().append(current_node)
                 current_node = current_node.get_parent()
