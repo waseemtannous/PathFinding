@@ -1,0 +1,4 @@
+R-RD-R-RD-RD-R-RD-R-R-R-RD-RD-RD-RD-D-RD-RD-RD-RD-RD-D-RD-RD-D-RD-RD-LD-RD-RD-LD-RD-D-RD-R-R-RD-RD 200 855
+
+Heuristic name|N  |d/N                |Success(Y/N)|Time(sec)           |EBF              |avg H value|Min|Avg               |Max|
+None          |855|0.04327485380116959|Y           |0.008975028991699219|1.200168785952219|None       |1  |22.315136476426797|38 |

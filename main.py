@@ -5,13 +5,6 @@ from AlgorithmType import *
 from Maze import Maze
 from Node import Node
 
-# main UI
-root = Tk()  # main window
-root.title("Path Finding")
-root.configure(background='#2b2b2b')
-root.geometry("300x300")  # width X height
-root.resizable(False, False)
-
 
 def import_file():  # a function to read a text file and analyze it
     global maze
@@ -105,13 +98,20 @@ def start_maze():
     exit(0)
 
 
-# here we add the UI buttons
-import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f41', fg='#a9b7c6', bd=0,
-                       font=("JetBrains Mono", 18))
-start_button = Button(root, text="Start Maze", command=start_maze, bg='#3c3f41', fg='#a9b7c6', bd=0, state=DISABLED,
-                      font=("JetBrains Mono", 18))
+if __name__ == '__main__':
+    # main UI
+    root = Tk()  # main window
+    root.title("Path Finding")
+    root.configure(background='#2b2b2b')
+    root.geometry("300x300")  # width X height
+    root.resizable(False, False)
+    # here we add the UI buttons
+    import_button = Button(root, text="Import Maze", command=import_file, bg='#3c3f41', fg='#a9b7c6', bd=0,
+                           font=("JetBrains Mono", 18))
+    start_button = Button(root, text="Start Maze", command=start_maze, bg='#3c3f41', fg='#a9b7c6', bd=0, state=DISABLED,
+                          font=("JetBrains Mono", 18))
 
-import_button.grid(row=0, column=0, padx=70, pady=50)
-start_button.grid(row=1, column=0, padx=70, pady=50)
+    import_button.grid(row=0, column=0, padx=70, pady=50)
+    start_button.grid(row=1, column=0, padx=70, pady=50)
 
-root.mainloop()  # display window
+    root.mainloop()  # display window

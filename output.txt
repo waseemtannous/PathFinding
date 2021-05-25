@@ -1,0 +1,4 @@
+D-D-D-D-D-D-RD-RD-RD-RD-RD-RD-D-RD-RD-D-RD-RD-RD-RD-RD-RD-RU-R-R-RD-R-R-RD-RD-D-RD-RD-RD-RU-RD-R-RD 1175 1198465
+
+Heuristic name|N      |d/N                 |Success(Y/N)|Time(sec)         |EBF               |avg H value|Min|Avg              |Max|
+None          |1198465|3.17072254926093e-05|Y           |10.316914081573486|1.4453193768599657|None       |0  |25.34146975537021|38 |
