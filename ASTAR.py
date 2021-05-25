@@ -45,8 +45,7 @@ def draw_node(maze, node):
 
 
 def astar(maze):
-    # maze.max_time = math.sqrt(maze.size)
-    maze.max_time = 100
+    maze.max_time = 4 * math.sqrt(maze.size)
     time_start = time.time()
 
     # Min heap for choosing the minimum cost every time.
@@ -78,11 +77,11 @@ def astar(maze):
         # We get the node with minimal cost
         current_node = heapq.heappop(open_heap)
         maze.update_expanded_nodes()
-        current_node.make_closed()
         # Remove the node from the open list ,and add it to the close list
         open_dictionary[current_node] = False
         closed_dictionary[current_node] = True
-        # draw_node(maze, current_node)
+        current_node.make_closed()
+        draw_node(maze, current_node)
 
         if previous_node:
             if not previous_node.is_neighbor(current_node):
@@ -117,7 +116,7 @@ def astar(maze):
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heapify(open_heap)
                 neighbor.make_open()
-                # draw_node(maze, neighbor)
+                draw_node(maze, neighbor)
             # If the node is on the close list ENTER HERE
             elif closed_dictionary.get(neighbor, False):
                 # If the cost is larger then do nothing
@@ -130,9 +129,9 @@ def astar(maze):
                 neighbor.set_parent(current_node)
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heappush(open_heap, neighbor)
-                neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
+                neighbor.make_open()
+                draw_node(maze, neighbor)
             else:
                 # Else add the node to open list
                 neighbor.set_g(neighbor_current_cost)
@@ -140,8 +139,8 @@ def astar(maze):
                 neighbor.set_parent(current_node)
                 calculate_f_cost(maze, neighbor, end_node)
                 heapq.heappush(open_heap, neighbor)
-                neighbor.make_open()
                 open_dictionary[neighbor] = True
-                # draw_node(maze, neighbor)
+                neighbor.make_open()
+                draw_node(maze, neighbor)
 
     return False

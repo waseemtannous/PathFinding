@@ -99,51 +99,47 @@ class Node:
 
     def is_neighbor(self, other):
         for neighbor in self.neighbors:
-           if neighbor.get_x() == other.get_x() and neighbor.get_y() == other.get_y():
-               return True
+            if neighbor.get_x() == other.get_x() and neighbor.get_y() == other.get_y():
+                return True
         return False
 
     def set_neighbors(self, maze, grid):
         self.neighbors = []
-        if self.get_x() != 0 and not grid[self.get_x() - 1][self.get_y()].is_barrier():  # up
-            self.neighbors.append(grid[self.get_x() - 1][self.get_y()])
-            self.min_neighbor_cost = grid[self.get_x() - 1][self.get_y()].get_cost()
+        if self.get_x() != 0 and not (grid[self.get_x() - 1][self.get_y()].get_cost() == -1):  # up
+            node = grid[self.get_x() - 1][self.get_y()]
+            self.neighbors.append(node)
 
-        if self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][self.get_y()].is_barrier():  # down
-            self.neighbors.append(grid[self.get_x() + 1][self.get_y()])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x() + 1][self.get_y()].get_cost())
+        if self.get_x() < maze.get_size() - 1 and not (grid[self.get_x() + 1][self.get_y()].get_cost() == -1):  # down
+            node = grid[self.get_x() + 1][self.get_y()]
+            self.neighbors.append(node)
 
-        if self.get_y() != 0 and not grid[self.get_x()][self.get_y() - 1].is_barrier():  # left
-            self.neighbors.append(grid[self.get_x()][self.get_y() - 1])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x()][self.get_y() - 1].get_cost())
+        if self.get_y() != 0 and not (grid[self.get_x()][self.get_y() - 1].get_cost() == -1):  # left
+            node = grid[self.get_x()][self.get_y() - 1]
+            self.neighbors.append(node)
 
-        if self.get_y() < maze.get_size() - 1 and not grid[self.get_x()][self.get_y() + 1].is_barrier():  # right
-            self.neighbors.append(grid[self.get_x()][self.get_y() + 1])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x()][self.get_y() + 1].get_cost())
+        if self.get_y() < maze.get_size() - 1 and not (grid[self.get_x()][self.get_y() + 1].get_cost() == -1):  # right
+            node = grid[self.get_x()][self.get_y() + 1]
+            self.neighbors.append(node)
 
-        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() - 1][
-            self.get_y() + 1].is_barrier():  # right up
-            self.neighbors.append(grid[self.get_x() - 1][self.get_y() + 1])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x() - 1][self.get_y() + 1].get_cost())
-            self.min_diagonal_neighbor_cost = grid[self.get_x() - 1][self.get_y() + 1].get_cost()
+        if self.get_x() != 0 and self.get_y() < maze.get_size() - 1 and not (
+                grid[self.get_x() - 1][self.get_y() + 1].get_cost() == -1):  # right up
+            node = grid[self.get_x() - 1][self.get_y() + 1]
+            self.neighbors.append(node)
 
-        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not grid[self.get_x() + 1][
-            self.get_y() + 1].is_barrier():  # right down
-            self.neighbors.append(grid[self.get_x() + 1][self.get_y() + 1])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x() + 1][self.get_y() + 1].get_cost())
-            self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, grid[self.get_x() + 1][self.get_y() + 1].get_cost())
+        if self.get_x() < maze.get_size() - 1 and self.get_y() < maze.get_size() - 1 and not (
+                grid[self.get_x() + 1][self.get_y() + 1].get_cost() == -1):  # right down
+            node = grid[self.get_x() + 1][self.get_y() + 1]
+            self.neighbors.append(node)
 
-        if self.get_y() != 0 and self.get_x() != 0 and not grid[self.get_x() - 1][
-            self.get_y() - 1].is_barrier():  # left up
-            self.neighbors.append(grid[self.get_x() - 1][self.get_y() - 1])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x() - 1][self.get_y() - 1].get_cost())
-            self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, grid[self.get_x() - 1][self.get_y() - 1].get_cost())
+        if self.get_y() != 0 and self.get_x() != 0 and not (
+                grid[self.get_x() - 1][self.get_y() - 1].get_cost() == -1):  # left up
+            node = grid[self.get_x() - 1][self.get_y() - 1]
+            self.neighbors.append(node)
 
-        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not grid[self.get_x() + 1][
-            self.get_y() - 1].is_barrier():  # left down
-            self.neighbors.append(grid[self.get_x() + 1][self.get_y() - 1])
-            self.min_neighbor_cost = min(self.min_neighbor_cost, grid[self.get_x() + 1][self.get_y() - 1].get_cost())
-            self.min_diagonal_neighbor_cost = min(self.min_diagonal_neighbor_cost, grid[self.get_x() + 1][self.get_y() - 1].get_cost())
+        if self.get_y() != 0 and self.get_x() < maze.get_size() - 1 and not (
+                grid[self.get_x() + 1][self.get_y() - 1].get_cost() == -1):  # left down
+            node = grid[self.get_x() + 1][self.get_y() - 1]
+            self.neighbors.append(node)
 
     # these will determine how the heap will sort the nodes
     def __lt__(self, other):
